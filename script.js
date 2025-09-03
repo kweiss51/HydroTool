@@ -1,12 +1,14 @@
 class HydropowerCalculator {
     constructor() {
         this.currentUnit = 'si';
+        this.currentTableView = 'siToImperial';
         this.constants = {
             si: {
                 gravity: 9.81, // m/s²
                 densityUnit: 'kg/m³',
                 flowRateUnit: 'm³/s',
                 headUnit: 'm',
+                gravityUnit: 'm/s²',
                 powerUnit: 'W'
             },
             imperial: {
@@ -14,12 +16,37 @@ class HydropowerCalculator {
                 densityUnit: 'lb/ft³',
                 flowRateUnit: 'ft³/s',
                 headUnit: 'ft',
+                gravityUnit: 'ft/s²',
                 powerUnit: 'ft·lb/s'
             }
         };
         
+        this.conversionData = {
+            siToImperial: [
+                { from: '1 Watt (W)', to: '0.00134102 Horsepower (HP)' },
+                { from: '1 Watt (W)', to: '0.737562 ft·lb/s' },
+                { from: '1 Watt (W)', to: '3.41214 BTU/h' },
+                { from: '1 Kilowatt (kW)', to: '1.34102 Horsepower (HP)' },
+                { from: '1 m³/s', to: '35.3147 ft³/s' },
+                { from: '1 meter (m)', to: '3.28084 feet (ft)' },
+                { from: '1 kg/m³', to: '0.062428 lb/ft³' },
+                { from: '1 m/s²', to: '3.28084 ft/s²' }
+            ],
+            imperialToSi: [
+                { from: '1 Horsepower (HP)', to: '745.7 Watts (W)' },
+                { from: '1 ft·lb/s', to: '1.35582 Watts (W)' },
+                { from: '1 BTU/h', to: '0.293071 Watts (W)' },
+                { from: '1 Horsepower (HP)', to: '0.7457 Kilowatts (kW)' },
+                { from: '1 ft³/s', to: '0.0283168 m³/s' },
+                { from: '1 foot (ft)', to: '0.3048 meters (m)' },
+                { from: '1 lb/ft³', to: '16.0185 kg/m³' },
+                { from: '1 ft/s²', to: '0.3048 m/s²' }
+            ]
+        };
+        
         this.initializeEventListeners();
         this.updateUnits();
+        this.populateConversionTable();
     }
 
     initializeEventListeners() {
@@ -30,6 +57,15 @@ class HydropowerCalculator {
         
         document.getElementById('imperialUnits').addEventListener('click', () => {
             this.switchUnits('imperial');
+        });
+        
+        // Table view buttons
+        document.getElementById('siToImperialBtn').addEventListener('click', () => {
+            this.switchTableView('siToImperial');
+        });
+        
+        document.getElementById('imperialToSiBtn').addEventListener('click', () => {
+            this.switchTableView('imperialToSi');
         });
         
         // Calculate button
@@ -101,7 +137,11 @@ class HydropowerCalculator {
         
         document.getElementById('flowRateUnit').textContent = constants.flowRateUnit;
         document.getElementById('headUnit').textContent = constants.headUnit;
+        document.getElementById('gravityUnit').textContent = constants.gravityUnit;
         document.getElementById('densityUnit').textContent = constants.densityUnit;
+        
+        // Update gravity value
+        document.getElementById('gravity').value = constants.gravity;
         
         // Update density default value
         if (this.currentUnit === 'si') {
@@ -109,6 +149,42 @@ class HydropowerCalculator {
         } else {
             document.getElementById('density').value = '62.43';
         }
+    }
+
+    switchTableView(viewType) {
+        // Update active button
+        document.querySelectorAll('.table-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(viewType + 'Btn').classList.add('active');
+        
+        this.currentTableView = viewType;
+        this.populateConversionTable();
+    }
+
+    populateConversionTable() {
+        const table = document.getElementById('conversionTable');
+        const data = this.conversionData[this.currentTableView];
+        
+        let tableHTML = `
+            <thead>
+                <tr>
+                    <th>From</th>
+                    <th>To</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
+        
+        data.forEach(conversion => {
+            tableHTML += `
+                <tr>
+                    <td>${conversion.from}</td>
+                    <td>${conversion.to}</td>
+                </tr>
+            `;
+        });
+        
+        tableHTML += '</tbody>';
+        table.innerHTML = tableHTML;
     }
 
     calculatePower() {

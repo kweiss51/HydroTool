@@ -26,7 +26,7 @@
                 <h2>Input Parameters</h2>
                 
                 <div class="input-group">
-                    <label for="flowRate">Flow Rate:</label>
+                    <label for="flowRate">Flow Rate (Q):</label>
                     <input type="number" id="flowRate" step="0.01" min="0" placeholder="Enter flow rate">
                     <span id="flowRateUnit" class="unit-label">m³/s</span>
                 </div>
@@ -35,6 +35,12 @@
                     <label for="head">Head (Height):</label>
                     <input type="number" id="head" step="0.01" min="0" placeholder="Enter head">
                     <span id="headUnit" class="unit-label">m</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="gravity">Gravity (g):</label>
+                    <input type="number" id="gravity" value="9.81" readonly>
+                    <span id="gravityUnit" class="unit-label">m/s²</span>
                 </div>
 
                 <div class="input-group">
@@ -58,13 +64,13 @@
                 <div class="result-card">
                     <h3>Theoretical Power</h3>
                     <div class="result-value" id="theoreticalPower">-</div>
-                    <div class="result-formula">P<sub>th</sub> = ρ × q × g × h</div>
+                    <div class="result-formula">P<sub>th</sub> = ρ × Q × g × h</div>
                 </div>
 
                 <div class="result-card">
                     <h3>Practical Power (with efficiency)</h3>
                     <div class="result-value" id="practicalPower">-</div>
-                    <div class="result-formula">P<sub>a</sub> = μ × ρ × q × g × h</div>
+                    <div class="result-formula">P<sub>a</sub> = μ × ρ × Q × g × h</div>
                 </div>
 
                 <div class="conversion-section">
@@ -79,11 +85,11 @@
                 <h2>Formula Information</h2>
                 <div class="formula-info">
                     <h3>Theoretical Power Formula:</h3>
-                    <p><strong>P<sub>th</sub> = ρ × q × g × h</strong></p>
+                    <p><strong>P<sub>th</sub> = ρ × Q × g × h</strong></p>
                     <ul>
                         <li><strong>P<sub>th</sub></strong> = Theoretical power (W)</li>
                         <li><strong>ρ</strong> = Water density (~1000 kg/m³)</li>
-                        <li><strong>q</strong> = Water flow rate (m³/s or ft³/s)</li>
+                        <li><strong>Q</strong> = Water flow rate (m³/s or ft³/s)</li>
                         <li><strong>g</strong> = Acceleration due to gravity (9.81 m/s² or 32.174 ft/s²)</li>
                         <li><strong>h</strong> = Head/height (m or ft)</li>
                     </ul>
@@ -96,10 +102,34 @@
                     </ul>
                 </div>
             </div>
+
+            <div class="conversion-table-section">
+                <h2>Unit Conversion Reference</h2>
+                <div class="table-controls">
+                    <button id="siToImperialBtn" class="table-btn active">SI to Imperial</button>
+                    <button id="imperialToSiBtn" class="table-btn">Imperial to SI</button>
+                </div>
+                <div class="conversion-table-container">
+                    <table id="conversionTable" class="conversion-table">
+                        <!-- Table content will be populated by JavaScript -->
+                    </table>
+                </div>
+            </div>
+
+            <div class="definitions-section">
+                <h2>Power Generation Definitions</h2>
+                <div class="definition-card">
+                    <h3>Theoretical Power (P<sub>th</sub>)</h3>
+                    <p>The maximum possible power that can be extracted from falling water, assuming 100% efficiency and no energy losses. This represents the total kinetic energy available from the water flow and gravitational potential energy, calculated using the basic physics formula P<sub>th</sub> = ρ × Q × g × h. In reality, this theoretical maximum cannot be achieved due to various losses in the system.</p>
+                </div>
+                <div class="definition-card">
+                    <h3>Practical Power (P<sub>a</sub>)</h3>
+                    <p>The actual usable power output from a hydropower system after accounting for real-world inefficiencies. This includes losses from turbine inefficiency, generator losses, mechanical friction, and other system losses. Practical power is calculated by multiplying theoretical power by an efficiency factor (μ), which typically ranges from 0.75 to 0.95 (75% to 95%) depending on the turbine type, design, and operating conditions.</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-<- Added emergency timeout functions to catch any edge GitHub Pages deployment trigger -->
