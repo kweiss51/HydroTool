@@ -8,7 +8,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     color: #333;
-    background: linear-gradient(135deg, #8FA8C8 0%, #B4A7C7 100%);
+    background: #2c2c2c;
     min-height: 100vh;
 }
 
@@ -36,21 +36,21 @@ header p {
 }
 
 .calculator-section {
-    background: white;
+    background: #e8e8e8;
     border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     overflow: hidden;
 }
 
 .unit-selector {
-    background: #f8f9fa;
+    background: #d4d4d4;
     padding: 20px;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #bbb;
 }
 
 .unit-selector h2 {
     margin-bottom: 15px;
-    color: #495057;
+    color: #000;
 }
 
 .unit-buttons {
@@ -61,9 +61,9 @@ header p {
 .unit-btn {
     flex: 1;
     padding: 12px 20px;
-    border: 2px solid #8FA8C8;
-    background: white;
-    color: #8FA8C8;
+    border: 2px solid #666;
+    background: #f0f0f0;
+    color: #000;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
@@ -71,12 +71,12 @@ header p {
 }
 
 .unit-btn:hover {
-    background: #8FA8C8;
+    background: #666;
     color: white;
 }
 
 .unit-btn.active {
-    background: #8FA8C8;
+    background: #666;
     color: white;
 }
 
@@ -86,7 +86,7 @@ header p {
 
 .input-section h2 {
     margin-bottom: 20px;
-    color: #495057;
+    color: #000;
 }
 
 .input-group {
@@ -99,34 +99,36 @@ header p {
 .input-group label {
     min-width: 120px;
     font-weight: 600;
-    color: #495057;
+    color: #000;
 }
 
 .input-group input {
     flex: 1;
     padding: 12px;
-    border: 2px solid #e9ecef;
+    border: 2px solid #bbb;
     border-radius: 8px;
     font-size: 16px;
+    background: #f0f0f0;
+    color: #000;
     transition: border-color 0.3s ease;
 }
 
 .input-group input:focus {
     outline: none;
-    border-color: #8FA8C8;
+    border-color: #666;
 }
 
 .input-group input[readonly] {
-    background-color: #f8f9fa;
-    color: #6c757d;
+    background-color: #ddd;
+    color: #555;
     cursor: not-allowed;
 }
 
 .unit-label {
     min-width: 80px;
     font-weight: 600;
-    color: #6c757d;
-    background: #f8f9fa;
+    color: #000;
+    background: #ddd;
     padding: 8px 12px;
     border-radius: 5px;
 }
@@ -134,7 +136,7 @@ header p {
 .calculate-btn {
     width: 100%;
     padding: 15px;
-    background: linear-gradient(135deg, #8FA8C8 0%, #B4A7C7 100%);
+    background: #666;
     color: white;
     border: none;
     border-radius: 8px;
@@ -152,38 +154,38 @@ header p {
 
 .results-section {
     padding: 30px;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
+    background: #d4d4d4;
+    border-top: 1px solid #bbb;
 }
 
 .results-section h2 {
     margin-bottom: 20px;
-    color: #495057;
+    color: #000;
 }
 
 .result-card {
-    background: white;
+    background: #f0f0f0;
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .result-card h3 {
-    color: #495057;
+    color: #000;
     margin-bottom: 10px;
 }
 
 .result-value {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #C67E7E;
+    color: #000;
     margin-bottom: 5px;
 }
 
 .result-formula {
     font-style: italic;
-    color: #6c757d;
+    color: #333;
     font-size: 0.9rem;
 }
 
@@ -193,7 +195,7 @@ header p {
 
 .conversion-section h3 {
     margin-bottom: 15px;
-    color: #495057;
+    color: #000;
 }
 
 .conversions-grid {
@@ -203,41 +205,41 @@ header p {
 }
 
 .conversion-item {
-    background: white;
+    background: #f0f0f0;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
 }
 
 .conversion-item .from {
-    color: #6c757d;
+    color: #333;
     font-size: 0.9rem;
 }
 
 .conversion-item .to {
-    color: #495057;
+    color: #000;
     font-weight: 600;
     margin-top: 5px;
 }
 
 .info-section {
     padding: 30px;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid #bbb;
 }
 
 .info-section h2 {
     margin-bottom: 20px;
-    color: #495057;
+    color: #000;
 }
 
 .formula-info {
-    background: #f8f9fa;
+    background: #d4d4d4;
     padding: 20px;
     border-radius: 10px;
 }
 
 .formula-info h3 {
-    color: #495057;
+    color: #000;
     margin-bottom: 10px;
     margin-top: 20px;
 }
@@ -262,12 +264,12 @@ header p {
 
 .conversion-table-section {
     padding: 30px;
-    border-top: 1px solid #e9ecef;
+    border-top: 1px solid #bbb;
 }
 
 .conversion-table-section h2 {
     margin-bottom: 20px;
-    color: #495057;
+    color: #000;
 }
 
 .table-controls {
@@ -278,9 +280,9 @@ header p {
 
 .table-btn {
     padding: 10px 20px;
-    border: 2px solid #8FA8C8;
-    background: white;
-    color: #8FA8C8;
+    border: 2px solid #666;
+    background: #f0f0f0;
+    color: #000;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 600;
@@ -288,12 +290,12 @@ header p {
 }
 
 .table-btn:hover {
-    background: #8FA8C8;
+    background: #666;
     color: white;
 }
 
 .table-btn.active {
-    background: #8FA8C8;
+    background: #666;
     color: white;
 }
 
@@ -304,27 +306,28 @@ header p {
 .conversion-table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: #f0f0f0;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .conversion-table th,
 .conversion-table td {
     padding: 12px 15px;
     text-align: left;
-    border-bottom: 1px solid #e9ecef;
+    border-bottom: 1px solid #bbb;
+    color: #000;
 }
 
 .conversion-table th {
-    background: #f8f9fa;
+    background: #ddd;
     font-weight: 600;
-    color: #495057;
+    color: #000;
 }
 
 .conversion-table tr:hover {
-    background: #f8f9fa;
+    background: #e8e8e8;
 }
 
 .conversion-table tr:last-child td {
@@ -333,30 +336,30 @@ header p {
 
 .definitions-section {
     padding: 30px;
-    background: #f8f9fa;
-    border-top: 1px solid #e9ecef;
+    background: #d4d4d4;
+    border-top: 1px solid #bbb;
 }
 
 .definitions-section h2 {
     margin-bottom: 20px;
-    color: #495057;
+    color: #000;
 }
 
 .definition-card {
-    background: white;
+    background: #f0f0f0;
     padding: 20px;
     border-radius: 10px;
     margin-bottom: 15px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .definition-card h3 {
-    color: #495057;
+    color: #000;
     margin-bottom: 10px;
 }
 
 .definition-card p {
-    color: #6c757d;
+    color: #333;
     line-height: 1.6;
 }
 
