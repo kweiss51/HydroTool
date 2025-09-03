@@ -23,10 +23,10 @@ class HydropowerCalculator {
         
         this.conversionData = {
             siToImperial: [
-                { from: '1 Watt (W)', to: '0.00134102 Horsepower (HP)' },
+                { from: '1 Watt (W)', to: '1.34102 Horsepower (HP)' },
                 { from: '1 Watt (W)', to: '0.737562 ft·lb/s' },
                 { from: '1 Watt (W)', to: '3.41214 BTU/h' },
-                { from: '1 Kilowatt (kW)', to: '1.34102 Horsepower (HP)' },
+                { from: '1 Kilowatt (kW)', to: '0.00134102 Horsepower (HP)'},
                 { from: '1 m³/s', to: '35.3147 ft³/s' },
                 { from: '1 meter (m)', to: '3.28084 feet (ft)' },
                 { from: '1 kg/m³', to: '0.062428 lb/ft³' },
