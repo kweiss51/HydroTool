@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydropower Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Hydropower Calculator</h1>
+            <p>Calculate hydropower generation in both Imperial and SI units</p>
+        </header>
+
+        <div class="calculator-section">
+            <div class="unit-selector">
+                <h2>Select Unit System</h2>
+                <div class="unit-buttons">
+                    <button id="siUnits" class="unit-btn active">SI Units (Metric)</button>
+                    <button id="imperialUnits" class="unit-btn">Imperial Units</button>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <h2>Input Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="flowRate">Flow Rate:</label>
+                    <input type="number" id="flowRate" step="0.01" min="0" placeholder="Enter flow rate">
+                    <span id="flowRateUnit" class="unit-label">m³/s</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="head">Head (Height):</label>
+                    <input type="number" id="head" step="0.01" min="0" placeholder="Enter head">
+                    <span id="headUnit" class="unit-label">m</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="efficiency">Efficiency:</label>
+                    <input type="number" id="efficiency" step="0.01" min="0" max="1" value="0.85" placeholder="0.75 - 0.95">
+                    <span class="unit-label">decimal (0.75-0.95)</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="density">Water Density:</label>
+                    <input type="number" id="density" step="0.1" min="0" value="1000" placeholder="Water density">
+                    <span id="densityUnit" class="unit-label">kg/m³</span>
+                </div>
+
+                <button id="calculateBtn" class="calculate-btn">Calculate Power</button>
+            </div>
+
+            <div class="results-section">
+                <h2>Results</h2>
+                
+                <div class="result-card">
+                    <h3>Theoretical Power</h3>
+                    <div class="result-value" id="theoreticalPower">-</div>
+                    <div class="result-formula">P<sub>th</sub> = ρ × q × g × h</div>
+                </div>
+
+                <div class="result-card">
+                    <h3>Practical Power (with efficiency)</h3>
+                    <div class="result-value" id="practicalPower">-</div>
+                    <div class="result-formula">P<sub>a</sub> = μ × ρ × q × g × h</div>
+                </div>
+
+                <div class="conversion-section">
+                    <h3>Unit Conversions</h3>
+                    <div id="conversions" class="conversions-grid">
+                        <!-- Conversions will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>Formula Information</h2>
+                <div class="formula-info">
+                    <h3>Theoretical Power Formula:</h3>
+                    <p><strong>P<sub>th</sub> = ρ × q × g × h</strong></p>
+                    <ul>
+                        <li><strong>P<sub>th</sub></strong> = Theoretical power (W)</li>
+                        <li><strong>ρ</strong> = Water density (~1000 kg/m³)</li>
+                        <li><strong>q</strong> = Water flow rate (m³/s or ft³/s)</li>
+                        <li><strong>g</strong> = Acceleration due to gravity (9.81 m/s² or 32.174 ft/s²)</li>
+                        <li><strong>h</strong> = Head/height (m or ft)</li>
+                    </ul>
+                    
+                    <h3>Practical Power Formula:</h3>
+                    <p><strong>P<sub>a</sub> = μ × P<sub>th</sub></strong></p>
+                    <ul>
+                        <li><strong>P<sub>a</sub></strong> = Actual available power (W)</li>
+                        <li><strong>μ</strong> = Efficiency (typically 0.75 to 0.95)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
