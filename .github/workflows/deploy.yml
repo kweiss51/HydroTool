@@ -3,8 +3,6 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
 
 # Allow one concurrent deployment
 concurrency:
@@ -34,7 +32,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository (since we're serving static files)
+          # Upload entire repository root (where index.html is located)
           path: '.'
           
       - name: Deploy to GitHub Pages
