@@ -26,13 +26,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         
+      - name: Create .nojekyll file
+        run: touch .nojekyll
+        
       - name: Setup Pages
         uses: actions/configure-pages@v4
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository root (where index.html is located)
+          # Upload only the web files, excluding .git and other non-web files
           path: '.'
           
       - name: Deploy to GitHub Pages
