@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pumped Storage Hydropower Calculator</title>
     <link rel="stylesheet" href="pumped-storage-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="container">
@@ -34,45 +35,141 @@
             <div class="diagram-section">
                 <h2>Pumped Storage System Diagram</h2>
                 <div class="diagram-container">
-                    <svg viewBox="0 0 800 400" class="ps-diagram">
-                        <!-- Upper Reservoir -->
-                        <rect x="50" y="50" width="200" height="60" fill="#4a90e2" stroke="#2c5f8e" stroke-width="2" rx="5"/>
-                        <text x="150" y="85" text-anchor="middle" fill="white" font-weight="bold">Upper Reservoir</text>
-                        
-                        <!-- Lower Reservoir -->
-                        <rect x="550" y="280" width="200" height="60" fill="#4a90e2" stroke="#2c5f8e" stroke-width="2" rx="5"/>
-                        <text x="650" y="315" text-anchor="middle" fill="white" font-weight="bold">Lower Reservoir</text>
-                        
-                        <!-- Penstock/Pipe -->
-                        <line x1="250" y1="100" x2="550" y2="290" stroke="#666" stroke-width="8"/>
-                        <text x="400" y="185" text-anchor="middle" fill="#333" font-weight="bold">Penstock</text>
-                        
-                        <!-- Powerhouse -->
-                        <rect x="480" y="250" width="80" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" rx="5"/>
-                        <text x="520" y="265" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Power</text>
-                        <text x="520" y="278" text-anchor="middle" fill="white" font-size="10" font-weight="bold">House</text>
-                        <text x="520" y="291" text-anchor="middle" fill="white" font-size="10" font-weight="bold">P/M</text>
-                        
-                        <!-- Height indicators -->
-                        <line x1="30" y1="80" x2="30" y2="310" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
-                        <line x1="25" y1="80" x2="35" y2="80" stroke="#e74c3c" stroke-width="2"/>
-                        <line x1="25" y1="310" x2="35" y2="310" stroke="#e74c3c" stroke-width="2"/>
-                        <text x="15" y="200" text-anchor="middle" fill="#e74c3c" font-weight="bold" transform="rotate(-90 15 200)">Head (H)</text>
-                        
-                        <!-- Flow arrows -->
+                    <svg viewBox="0 0 1200 600" class="ps-diagram">
                         <defs>
-                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                                <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60" />
+                            <!-- Gradients for realistic appearance -->
+                            <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="hillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#27ae60;stop-opacity:1" />
+                                <stop offset="70%" style="stop-color:#2ecc71;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#16a085;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="rockGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" style="stop-color:#95a5a6;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#7f8c8d;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <linearGradient id="penstockGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" style="stop-color:#34495e;stop-opacity:1" />
+                                <stop offset="50%" style="stop-color:#2c3e50;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
+                            </linearGradient>
+                            
+                            <!-- Arrow markers -->
+                            <marker id="flowArrow" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+                                <polygon points="0 0, 14 5, 0 10" fill="#1a237e" />
+                            </marker>
+                            
+                            <marker id="genArrow" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
+                                <polygon points="0 0, 14 5, 0 10" fill="#87ceeb" />
                             </marker>
                         </defs>
                         
-                        <!-- Generation flow -->
-                        <path d="M 220 120 Q 350 180 500 260" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
-                        <text x="320" y="200" fill="#27ae60" font-weight="bold" font-size="12">Generation</text>
+                        <!-- Sky background -->
+                        <rect width="1200" height="300" fill="#87CEEB"/>
                         
-                        <!-- Pumping flow -->
-                        <path d="M 530 280 Q 380 220 270 140" stroke="#e74c3c" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
-                        <text x="420" y="230" fill="#e74c3c" font-weight="bold" font-size="12">Pumping</text>
+                        <!-- Mountain/Hill landscape -->
+                        <polygon points="0,300 200,120 400,180 600,100 800,150 1000,80 1200,130 1200,600 0,600" 
+                                fill="url(#hillGradient)" stroke="#229954" stroke-width="2"/>
+                        
+                        <!-- Rock face for upper reservoir -->
+                        <polygon points="150,120 350,120 380,200 120,200" fill="url(#rockGradient)" stroke="#5d6d7e" stroke-width="2"/>
+                        
+                        <!-- Upper Reservoir (on mountain top) -->
+                        <ellipse cx="250" cy="120" rx="100" ry="25" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        <rect x="150" y="120" width="200" height="50" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        <ellipse cx="250" cy="170" rx="100" ry="25" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        
+                        <!-- Upper reservoir label -->
+                        <rect x="165" y="85" width="170" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#2c3e50" stroke-width="2"/>
+                        <text x="250" y="105" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="16">UPPER RESERVOIR</text>
+                        
+                        <!-- Penstock following terrain -->
+                        <path d="M 320 150 Q 450 200 580 280 Q 700 350 800 420" 
+                              stroke="url(#penstockGrad)" stroke-width="16" fill="none" stroke-linecap="round"/>
+                        <path d="M 322 152 Q 452 202 582 282 Q 702 352 798 418" 
+                              stroke="#515a5a" stroke-width="12" fill="none" stroke-linecap="round"/>
+                        
+                        <!-- Penstock support structures -->
+                        <rect x="440" y="195" width="8" height="30" fill="#7f8c8d"/>
+                        <rect x="570" y="275" width="8" height="35" fill="#7f8c8d"/>
+                        <rect x="680" y="345" width="8" height="40" fill="#7f8c8d"/>
+                        
+                        <!-- Powerhouse (at base of mountain) -->
+                        <rect x="760" y="400" width="120" height="80" fill="#e67e22" stroke="#d35400" stroke-width="3" rx="8"/>
+                        <rect x="765" y="405" width="110" height="15" fill="#f39c12" rx="5"/>
+                        <polygon points="760,400 820,380 880,400" fill="#8b4513" stroke="#6b3410" stroke-width="2"/>
+                        
+                        <!-- Powerhouse details -->
+                        <rect x="780" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
+                        <rect x="810" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
+                        <rect x="840" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
+                        
+                        <!-- Powerhouse label -->
+                        <rect x="875" y="385" width="120" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#d35400" stroke-width="2"/>
+                        <text x="935" y="405" text-anchor="middle" fill="#d35400" font-weight="bold" font-size="14">POWERHOUSE</text>
+                        
+                        <!-- Lower Reservoir (at valley floor) -->
+                        <ellipse cx="950" cy="480" rx="120" ry="30" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        <rect x="830" y="480" width="240" height="60" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        <ellipse cx="950" cy="540" rx="120" ry="30" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
+                        
+                        <!-- Lower reservoir label -->
+                        <rect x="860" y="445" width="180" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#2c3e50" stroke-width="2"/>
+                        <text x="950" y="465" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="16">LOWER RESERVOIR</text>
+                        
+                        <!-- Tailrace to lower reservoir -->
+                        <rect x="880" y="465" width="40" height="15" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="2"/>
+                        
+                        <!-- Head measurement -->
+                        <line x1="80" y1="140" x2="80" y2="500" stroke="#e74c3c" stroke-width="4" stroke-dasharray="5,5"/>
+                        <line x1="75" y1="140" x2="85" y2="140" stroke="#e74c3c" stroke-width="4"/>
+                        <line x1="75" y1="500" x2="85" y2="500" stroke="#e74c3c" stroke-width="4"/>
+                        <polygon points="80,145 85,155 75,155" fill="#e74c3c"/>
+                        <polygon points="80,495 85,485 75,485" fill="#e74c3c"/>
+                        
+                        <!-- Head label -->
+                        <rect x="30" y="310" width="50" height="40" fill="rgba(255,255,255,0.95)" rx="8" stroke="#e74c3c" stroke-width="2"/>
+                        <text x="55" y="327" text-anchor="middle" fill="#e74c3c" font-weight="bold" font-size="14">HEAD</text>
+                        <text x="55" y="343" text-anchor="middle" fill="#e74c3c" font-weight="bold" font-size="12">(H)</text>
+                        
+                        <!-- Flow arrows -->
+                        <!-- Generation mode (following penstock path closely) -->
+                        <path d="M 320 150 Q 450 200 580 280 Q 700 350 820 420" 
+                              stroke="#87ceeb" stroke-width="8" fill="none" marker-end="url(#genArrow)" 
+                              stroke-dasharray="12,6" opacity="0.9"/>
+                        <rect x="470" y="235" width="140" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#87ceeb" stroke-width="2"/>
+                        <text x="540" y="255" text-anchor="middle" fill="#1565c0" font-weight="bold" font-size="15">GENERATION</text>
+                        
+                        <!-- Pumping mode (up) -->
+                        <path d="M 800 450 Q 650 390 500 300 Q 400 230 320 180" 
+                              stroke="#1a237e" stroke-width="6" fill="none" marker-end="url(#flowArrow)" 
+                              stroke-dasharray="10,5"/>
+                        <rect x="520" y="320" width="120" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#1a237e" stroke-width="2"/>
+                        <text x="580" y="340" text-anchor="middle" fill="#1a237e" font-weight="bold" font-size="15">PUMPING</text>
+                        
+                        <!-- Power transmission lines -->
+                        <line x1="880" y1="420" x2="1000" y2="420" stroke="#2c3e50" stroke-width="6"/>
+                        <line x1="1000" y1="420" x2="1020" y2="410" stroke="#2c3e50" stroke-width="4"/>
+                        <line x1="1000" y1="420" x2="1020" y2="430" stroke="#2c3e50" stroke-width="4"/>
+                        
+                        <!-- Grid connection -->
+                        <rect x="1025" y="400" width="90" height="45" fill="rgba(255,255,255,0.95)" rx="10" stroke="#2c3e50" stroke-width="2"/>
+                        <text x="1070" y="420" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="14">ELECTRICAL</text>
+                        <text x="1070" y="435" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="14">GRID</text>
+                        
+                        <!-- Elevation markers -->
+                        <text x="250" y="60" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="12">High Elevation</text>
+                        <text x="950" y="580" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="12">Low Elevation</text>
+                        
+                        <!-- System title -->
+                        <rect x="400" y="20" width="400" height="35" fill="rgba(44,62,80,0.9)" rx="15"/>
+                        <text x="600" y="42" text-anchor="middle" fill="white" font-weight="bold" font-size="18">PUMPED STORAGE HYDROPOWER SYSTEM</text>
                     </svg>
                 </div>
             </div>
@@ -217,6 +314,33 @@
                         <h3>Round-trip Efficiency</h3>
                         <div class="result-value" id="roundTripEfficiency">-</div>
                         <div class="result-formula">η<sub>RT</sub> = η<sub>pump</sub> × η<sub>turbine</sub> × η<sub>gen</sub>²</div>
+                    </div>
+                </div>
+
+                <!-- Interactive Charts Section -->
+                <div class="charts-section">
+                    <h3>Performance Analysis Charts</h3>
+                    
+                    <div class="charts-grid">
+                        <div class="chart-container">
+                            <h4>System Efficiency Breakdown</h4>
+                            <canvas id="efficiencyChart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4>Power vs. Head Relationship</h4>
+                            <canvas id="powerHeadChart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4>Energy Storage Duration</h4>
+                            <canvas id="energyDurationChart" width="400" height="200"></canvas>
+                        </div>
+                        
+                        <div class="chart-container">
+                            <h4>Component Cost Distribution</h4>
+                            <canvas id="costBenefitChart" width="400" height="200"></canvas>
+                        </div>
                     </div>
                 </div>
 

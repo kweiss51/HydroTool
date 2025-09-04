@@ -19,6 +19,80 @@ body {
     padding: 20px;
 }
 
+/* Charts Section */
+.charts-section {
+    margin: 30px 0;
+    padding: 25px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.charts-section h3 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+    max-width: 100%;
+}
+
+.chart-container {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border: 1px solid #e0e0e0;
+    transition: transform 0.3s ease;
+    height: 280px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.chart-container h4 {
+    color: #34495e;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1rem;
+    border-bottom: 2px solid #4a90e2;
+    padding-bottom: 6px;
+    flex-shrink: 0;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 200px !important;
+    flex-grow: 1;
+}
+
+/* Responsive chart adjustments */
+@media (max-width: 768px) {
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .chart-container {
+        padding: 15px;
+    }
+    
+    .chart-container h4 {
+        font-size: 1rem;
+    }
+}
+
+/* Header Styles */
 header {
     text-align: center;
     color: white;
@@ -122,32 +196,25 @@ header p {
     color: white;
 }
 
-/* Diagram Section */
-.diagram-section {
-    padding: 30px;
-    background: #f0f0f0;
-    border-bottom: 1px solid #bbb;
-}
-
-.diagram-section h2 {
-    margin-bottom: 20px;
-    color: #000;
-    text-align: center;
-}
-
+/* Diagram Styling */
 .diagram-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
+    text-align: center;
+    margin: 25px 0;
+    background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border: 2px solid #81c784;
 }
 
 .ps-diagram {
-    max-width: 100%;
+    width: 100%;
+    max-width: 1200px;
     height: auto;
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    background: linear-gradient(to bottom, #87CEEB 0%, #98FB98 50%, #90EE90 100%);
+    border-radius: 12px;
+    filter: drop-shadow(0 8px 16px rgba(0,0,0,0.1));
+    border: 2px solid #4caf50;
 }
 
 /* Reservoir Configuration */

@@ -234,6 +234,7 @@ class PumpedStorageCalculator {
         this.displayResults(calculations);
         this.displayCalculationSteps(calculations);
         this.displayConversions(calculations);
+        this.createCharts(calculations);
     }
 
     getInputValues() {
@@ -522,6 +523,257 @@ class PumpedStorageCalculator {
         document.getElementById('roundTripEfficiency').textContent = '-';
         document.getElementById('calculationSteps').innerHTML = '';
         document.getElementById('conversions').innerHTML = '';
+    }
+
+    createCharts(calc) {
+        this.createEfficiencyChart(calc);
+        this.createPowerHeadChart(calc);
+        this.createEnergyDurationChart(calc);
+        this.createCostBenefitChart(calc);
+    }
+
+    createEfficiencyChart(calc) {
+        const ctx = document.getElementById('efficiencyChart').getContext('2d');
+        
+        // Destroy existing chart if it exists
+        if (this.efficiencyChart) {
+            this.efficiencyChart.destroy();
+        }
+        
+        this.efficiencyChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Round-trip Efficiency', 'Energy Loss'],
+                datasets: [{
+                    data: [
+                        calc.roundTripEfficiency * 100,
+                        (1 - calc.roundTripEfficiency) * 100
+                    ],
+                    backgroundColor: ['#27ae60', '#e74c3c'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 10,
+                            font: {
+                                size: 10
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.parsed.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    createPowerHeadChart(calc) {
+        const ctx = document.getElementById('powerHeadChart').getContext('2d');
+        
+        if (this.powerHeadChart) {
+            this.powerHeadChart.destroy();
+        }
+        
+        // Generate data points for different heads
+        const heads = [];
+        const powers = [];
+        const currentHead = calc.effectiveHead;
+        const currentPower = calc.inputs.power;
+        
+        for (let i = 0.5; i <= 2; i += 0.1) {
+            const head = currentHead * i;
+            const power = currentPower * i; // Simplified relationship
+            heads.push(head.toFixed(0));
+            powers.push(power);
+        }
+        
+        this.powerHeadChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: heads,
+                datasets: [{
+                    label: 'Power Output',
+                    data: powers,
+                    borderColor: '#4a90e2',
+                    backgroundColor: 'rgba(74,144,226,0.1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#4a90e2',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 1,
+                    pointRadius: 3,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: `Head (${this.constants[this.currentUnit].lengthUnit})`,
+                            font: {
+                                size: 10
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: `Power (${calc.inputs.powerUnit})`,
+                            font: {
+                                size: 10
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    createEnergyDurationChart(calc) {
+        const ctx = document.getElementById('energyDurationChart').getContext('2d');
+        
+        if (this.energyDurationChart) {
+            this.energyDurationChart.destroy();
+        }
+        
+        // Generate data for different operation durations
+        const durations = [1, 2, 4, 6, 8, 10, 12, 24];
+        const energyCapacities = durations.map(hours => {
+            const volume = calc.flowRate * hours * 3600;
+            return this.calculateEnergyCapacity(volume, calc.effectiveHead, calc.roundTripEfficiency, 
+                this.constants[this.currentUnit].gravity, this.constants[this.currentUnit].density);
+        });
+        
+        this.energyDurationChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: durations.map(d => d + 'h'),
+                datasets: [{
+                    label: 'Energy Storage (kWh)',
+                    data: energyCapacities,
+                    backgroundColor: 'rgba(46,204,113,0.7)',
+                    borderColor: '#2ecc71',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Operation Duration',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Energy Capacity (kWh)',
+                            font: {
+                                size: 10
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 9
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+    }
+
+    createCostBenefitChart(calc) {
+        const ctx = document.getElementById('costBenefitChart').getContext('2d');
+        
+        if (this.costBenefitChart) {
+            this.costBenefitChart.destroy();
+        }
+        
+        // Industry-standard PSH cost breakdown based on methodology studies
+        const categories = ['Civil Works', 'Turbine/Pump', 'Generator/Motor', 'Electrical Systems', 'Other Equipment'];
+        const proportions = [45, 25, 15, 10, 5]; // Percentage breakdown from PSH methodology
+        
+        this.costBenefitChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: categories.map((cat, index) => `${cat} (${proportions[index]}%)`),
+                datasets: [{
+                    data: proportions,
+                    backgroundColor: [
+                        '#8B4513', '#1E90FF', '#FF6347', '#32CD32', '#9370DB'
+                    ],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 8,
+                            font: {
+                                size: 9
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label.split(' (')[0] + ': ' + context.parsed + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 }
 
