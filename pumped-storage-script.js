@@ -46,13 +46,11 @@ class PumpedStorageCalculator {
     }
 
     initializeEventListeners() {
-        // Unit selector buttons
-        document.getElementById('siUnits').addEventListener('click', () => {
-            this.switchUnits('si');
-        });
-        
-        document.getElementById('imperialUnits').addEventListener('click', () => {
-            this.switchUnits('imperial');
+        // Unit selector radio buttons
+        document.querySelectorAll('input[name="unitSystem"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                this.switchUnits(e.target.value);
+            });
         });
         
         // Reservoir type selection
@@ -74,7 +72,7 @@ class PumpedStorageCalculator {
         });
         
         // Real-time calculation on input change
-        const inputs = ['desiredPower', 'operationTime', 'staticHead', 'pumpEfficiency', 
+        const inputs = ['desiredPower', 'operationTime', 'staticHead', 'flowRate', 'pumpEfficiency', 
                        'turbineEfficiency', 'generatorEfficiency'];
         inputs.forEach(inputId => {
             const element = document.getElementById(inputId);
@@ -92,9 +90,7 @@ class PumpedStorageCalculator {
     }
 
     switchUnits(unitSystem) {
-        // Update active button
-        document.querySelectorAll('.unit-btn').forEach(btn => btn.classList.remove('active'));
-        document.getElementById(unitSystem + 'Units').classList.add('active');
+        // Update active radio button (no need to update button classes for radio buttons)
         
         // Convert existing values if any
         if (this.currentUnit !== unitSystem) {
@@ -107,32 +103,48 @@ class PumpedStorageCalculator {
 
     convertExistingValues(newUnit) {
         const staticHeadInput = document.getElementById('staticHead');
+        const flowRateInput = document.getElementById('flowRate');
         const penstockLengthInput = document.getElementById('penstockLength');
         const penstockDiameterInput = document.getElementById('penstockDiameter');
         
-        const factor = newUnit === 'imperial' ? 
+        const lengthFactor = newUnit === 'imperial' ? 
             this.conversionFactors.siToImperial.length : 
             this.conversionFactors.imperialToSi.length;
+            
+        const flowFactor = newUnit === 'imperial' ? 
+            this.conversionFactors.siToImperial.flow : 
+            this.conversionFactors.imperialToSi.flow;
         
         if (staticHeadInput.value) {
-            staticHeadInput.value = (parseFloat(staticHeadInput.value) * factor).toFixed(2);
+            staticHeadInput.value = (parseFloat(staticHeadInput.value) * lengthFactor).toFixed(2);
         }
         
-        if (penstockLengthInput.value) {
-            penstockLengthInput.value = (parseFloat(penstockLengthInput.value) * factor).toFixed(1);
+        if (flowRateInput && flowRateInput.value) {
+            flowRateInput.value = (parseFloat(flowRateInput.value) * flowFactor).toFixed(3);
         }
         
-        if (penstockDiameterInput.value) {
-            penstockDiameterInput.value = (parseFloat(penstockDiameterInput.value) * factor).toFixed(2);
+        if (penstockLengthInput && penstockLengthInput.value) {
+            penstockLengthInput.value = (parseFloat(penstockLengthInput.value) * lengthFactor).toFixed(1);
+        }
+        
+        if (penstockDiameterInput && penstockDiameterInput.value) {
+            penstockDiameterInput.value = (parseFloat(penstockDiameterInput.value) * lengthFactor).toFixed(2);
         }
     }
 
     updateUnits() {
         const constants = this.constants[this.currentUnit];
         
+        // Update unit labels
         document.getElementById('headUnit').textContent = constants.lengthUnit;
-        document.getElementById('lengthUnit').textContent = constants.lengthUnit;
-        document.getElementById('diameterUnit').textContent = constants.lengthUnit;
+        document.getElementById('flowUnit').textContent = constants.flowUnit;
+        
+        // Update advanced parameter units if they exist
+        const lengthUnitEl = document.getElementById('lengthUnit');
+        if (lengthUnitEl) lengthUnitEl.textContent = constants.lengthUnit;
+        
+        const diameterUnitEl = document.getElementById('diameterUnit');
+        if (diameterUnitEl) diameterUnitEl.textContent = constants.lengthUnit;
         
         // Update power unit options
         const powerUnitSelect = document.getElementById('powerUnit');
@@ -254,6 +266,7 @@ class PumpedStorageCalculator {
             powerUnit: powerUnit,
             operationTime: parseFloat(document.getElementById('operationTime').value) || 8,
             staticHead: parseFloat(document.getElementById('staticHead').value) || 0,
+            flowRate: parseFloat(document.getElementById('flowRate').value) || 0,
             pumpEfficiency: parseFloat(document.getElementById('pumpEfficiency').value) || 0.85,
             turbineEfficiency: parseFloat(document.getElementById('turbineEfficiency').value) || 0.90,
             generatorEfficiency: parseFloat(document.getElementById('generatorEfficiency').value) || 0.95,
@@ -281,15 +294,31 @@ class PumpedStorageCalculator {
         let effectiveHead = inputs.staticHead;
         let headLoss = 0;
         
-        if (inputs.penstockLength > 0 && inputs.penstockDiameter > 0) {
-            // Estimate flow rate for head loss calculation (initial estimate)
-            const initialFlowRate = this.calculateFlowRate(inputs.power, effectiveHead, generationEfficiency, g, rho);
-            headLoss = this.calculateHeadLoss(initialFlowRate, inputs.penstockLength, inputs.penstockDiameter, inputs.roughness);
-            effectiveHead = inputs.staticHead - headLoss;
+        // Determine flow rate: use provided value or calculate from power
+        let flowRate;
+        if (inputs.flowRate > 0) {
+            // Use provided flow rate
+            flowRate = inputs.flowRate;
+        } else {
+            // Calculate flow rate from power (initial estimate for head loss calculation)
+            flowRate = this.calculateFlowRate(inputs.power, effectiveHead, generationEfficiency, g, rho);
         }
         
-        // Calculate required flow rate
-        const flowRate = this.calculateFlowRate(inputs.power, effectiveHead, generationEfficiency, g, rho);
+        if (inputs.penstockLength > 0 && inputs.penstockDiameter > 0) {
+            headLoss = this.calculateHeadLoss(flowRate, inputs.penstockLength, inputs.penstockDiameter, inputs.roughness);
+            effectiveHead = inputs.staticHead - headLoss;
+            
+            // Recalculate flow rate with effective head if power was used to calculate it
+            if (inputs.flowRate <= 0) {
+                flowRate = this.calculateFlowRate(inputs.power, effectiveHead, generationEfficiency, g, rho);
+            }
+        }
+        
+        // If flow rate was provided, calculate the actual power output
+        let actualPower = inputs.power;
+        if (inputs.flowRate > 0) {
+            actualPower = this.calculatePower(flowRate, effectiveHead, generationEfficiency, g, rho);
+        }
         
         // Calculate required reservoir volume
         const reservoirVolume = flowRate * inputs.operationTime * 3600; // Convert hours to seconds
@@ -298,7 +327,7 @@ class PumpedStorageCalculator {
         const energyCapacity = this.calculateEnergyCapacity(reservoirVolume, effectiveHead, roundTripEfficiency, g, rho);
         
         // Calculate pumping power required
-        const pumpingPower = inputs.power / roundTripEfficiency;
+        const pumpingPower = actualPower / roundTripEfficiency;
         
         return {
             inputs,
@@ -309,10 +338,22 @@ class PumpedStorageCalculator {
             effectiveHead,
             headLoss,
             flowRate,
+            actualPower,
             reservoirVolume,
             energyCapacity,
             pumpingPower
         };
+    }
+
+    calculatePower(flowRate, head, efficiency, g, rho) {
+        // P = ρ × g × Q × H × η
+        const powerWatts = rho * g * flowRate * head * efficiency;
+        
+        if (this.currentUnit === 'si') {
+            return powerWatts / 1000; // W to kW
+        } else {
+            return powerWatts / 745.7; // W to HP
+        }
     }
 
     calculateFlowRate(power, head, efficiency, g, rho) {

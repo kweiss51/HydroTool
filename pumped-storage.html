@@ -25,9 +25,17 @@
             <!-- Unit System Selection -->
             <div class="unit-selector">
                 <h2>Select Unit System</h2>
-                <div class="unit-buttons">
-                    <button id="siUnits" class="unit-btn active">SI Units (Metric)</button>
-                    <button id="imperialUnits" class="unit-btn">Imperial Units</button>
+                <div class="unit-toggle">
+                    <label class="toggle-container">
+                        <input type="radio" name="unitSystem" value="si" id="siUnits" checked>
+                        <span class="toggle-checkmark"></span>
+                        <strong>Metric (SI)</strong>
+                    </label>
+                    <label class="toggle-container">
+                        <input type="radio" name="unitSystem" value="imperial" id="imperialUnits">
+                        <span class="toggle-checkmark"></span>
+                        <strong>Imperial (US)</strong>
+                    </label>
                 </div>
             </div>
 
@@ -218,6 +226,12 @@
                         <option value="kW">kW</option>
                         <option value="MW">MW</option>
                     </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="flowRate">Flow Rate (Q):</label>
+                    <input type="number" id="flowRate" step="0.1" min="0" placeholder="Enter flow rate">
+                    <span id="flowUnit" class="unit-label">m³/s</span>
                 </div>
 
                 <div class="input-group">
