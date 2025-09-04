@@ -15,7 +15,7 @@ class PumpedStorageCalculator {
             imperial: {
                 gravity: 32.174, // ft/s²
                 density: 62.43, // lb/ft³
-                powerUnits: ['HP', 'kHP'],
+                powerUnits: ['kW', 'MW', 'HP', 'kHP'],
                 lengthUnit: 'ft',
                 volumeUnit: 'ft³',
                 flowUnit: 'ft³/s',
@@ -148,13 +148,23 @@ class PumpedStorageCalculator {
         
         // Update power unit options
         const powerUnitSelect = document.getElementById('powerUnit');
+        const currentPowerUnit = powerUnitSelect.value;
         powerUnitSelect.innerHTML = '';
+        
         constants.powerUnits.forEach(unit => {
             const option = document.createElement('option');
             option.value = unit;
             option.textContent = unit;
             powerUnitSelect.appendChild(option);
         });
+        
+        // Try to preserve the current power unit, or set a reasonable default
+        if (constants.powerUnits.includes(currentPowerUnit)) {
+            powerUnitSelect.value = currentPowerUnit;
+        } else {
+            // Set default to kW for both systems
+            powerUnitSelect.value = 'kW';
+        }
     }
 
     initializeReservoirConfig() {
@@ -253,16 +263,19 @@ class PumpedStorageCalculator {
         const powerValue = parseFloat(document.getElementById('desiredPower').value) || 0;
         const powerUnit = document.getElementById('powerUnit').value;
         
-        // Convert power to base units (kW for SI, HP for Imperial)
+        // Convert all power to kW for consistent calculations
         let power = powerValue;
-        if (this.currentUnit === 'si' && powerUnit === 'MW') {
+        if (powerUnit === 'MW') {
             power = powerValue * 1000; // MW to kW
-        } else if (this.currentUnit === 'imperial' && powerUnit === 'kHP') {
-            power = powerValue * 1000; // kHP to HP
+        } else if (powerUnit === 'HP') {
+            power = powerValue * 0.7457; // HP to kW
+        } else if (powerUnit === 'kHP') {
+            power = powerValue * 745.7; // kHP to kW
         }
+        // kW stays as is
         
         return {
-            power: power,
+            power: power, // Always in kW
             powerUnit: powerUnit,
             operationTime: parseFloat(document.getElementById('operationTime').value) || 8,
             staticHead: parseFloat(document.getElementById('staticHead').value) || 0,
@@ -348,25 +361,14 @@ class PumpedStorageCalculator {
     calculatePower(flowRate, head, efficiency, g, rho) {
         // P = ρ × g × Q × H × η
         const powerWatts = rho * g * flowRate * head * efficiency;
-        
-        if (this.currentUnit === 'si') {
-            return powerWatts / 1000; // W to kW
-        } else {
-            return powerWatts / 745.7; // W to HP
-        }
+        return powerWatts / 1000; // Always return kW
     }
 
     calculateFlowRate(power, head, efficiency, g, rho) {
         // P = ρ × g × Q × H × η
         // Q = P / (ρ × g × H × η)
         
-        let powerInWatts = power;
-        if (this.currentUnit === 'si') {
-            powerInWatts = power * 1000; // kW to W
-        } else {
-            powerInWatts = power * 745.7; // HP to W
-        }
-        
+        const powerInWatts = power * 1000; // power is always in kW, convert to Watts
         return powerInWatts / (rho * g * head * efficiency);
     }
 
