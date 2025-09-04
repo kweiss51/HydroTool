@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pumped Storage Hydropower Calculator</title>
+    <link rel="stylesheet" href="pumped-storage-styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Pumped Storage Hydropower Calculator</h1>
+            <p>Design and analyze pumped storage facilities with detailed calculations</p>
+        </header>
+
+        <nav class="calculator-nav">
+            <div class="nav-buttons">
+                <a href="index.html" class="nav-btn">Basic Hydropower</a>
+                <button class="nav-btn active">Pumped Storage</button>
+            </div>
+        </nav>
+
+        <div class="calculator-section">
+            <!-- Unit System Selection -->
+            <div class="unit-selector">
+                <h2>Select Unit System</h2>
+                <div class="unit-buttons">
+                    <button id="siUnits" class="unit-btn active">SI Units (Metric)</button>
+                    <button id="imperialUnits" class="unit-btn">Imperial Units</button>
+                </div>
+            </div>
+
+            <!-- Pumped Storage Diagram -->
+            <div class="diagram-section">
+                <h2>Pumped Storage System Diagram</h2>
+                <div class="diagram-container">
+                    <svg viewBox="0 0 800 400" class="ps-diagram">
+                        <!-- Upper Reservoir -->
+                        <rect x="50" y="50" width="200" height="60" fill="#4a90e2" stroke="#2c5f8e" stroke-width="2" rx="5"/>
+                        <text x="150" y="85" text-anchor="middle" fill="white" font-weight="bold">Upper Reservoir</text>
+                        
+                        <!-- Lower Reservoir -->
+                        <rect x="550" y="280" width="200" height="60" fill="#4a90e2" stroke="#2c5f8e" stroke-width="2" rx="5"/>
+                        <text x="650" y="315" text-anchor="middle" fill="white" font-weight="bold">Lower Reservoir</text>
+                        
+                        <!-- Penstock/Pipe -->
+                        <line x1="250" y1="100" x2="550" y2="290" stroke="#666" stroke-width="8"/>
+                        <text x="400" y="185" text-anchor="middle" fill="#333" font-weight="bold">Penstock</text>
+                        
+                        <!-- Powerhouse -->
+                        <rect x="480" y="250" width="80" height="50" fill="#f39c12" stroke="#d68910" stroke-width="2" rx="5"/>
+                        <text x="520" y="265" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Power</text>
+                        <text x="520" y="278" text-anchor="middle" fill="white" font-size="10" font-weight="bold">House</text>
+                        <text x="520" y="291" text-anchor="middle" fill="white" font-size="10" font-weight="bold">P/M</text>
+                        
+                        <!-- Height indicators -->
+                        <line x1="30" y1="80" x2="30" y2="310" stroke="#e74c3c" stroke-width="2" marker-end="url(#arrowhead)"/>
+                        <line x1="25" y1="80" x2="35" y2="80" stroke="#e74c3c" stroke-width="2"/>
+                        <line x1="25" y1="310" x2="35" y2="310" stroke="#e74c3c" stroke-width="2"/>
+                        <text x="15" y="200" text-anchor="middle" fill="#e74c3c" font-weight="bold" transform="rotate(-90 15 200)">Head (H)</text>
+                        
+                        <!-- Flow arrows -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#27ae60" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Generation flow -->
+                        <path d="M 220 120 Q 350 180 500 260" stroke="#27ae60" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                        <text x="320" y="200" fill="#27ae60" font-weight="bold" font-size="12">Generation</text>
+                        
+                        <!-- Pumping flow -->
+                        <path d="M 530 280 Q 380 220 270 140" stroke="#e74c3c" stroke-width="3" fill="none" marker-end="url(#arrowhead)"/>
+                        <text x="420" y="230" fill="#e74c3c" font-weight="bold" font-size="12">Pumping</text>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Reservoir Configuration -->
+            <div class="reservoir-config">
+                <h2>Reservoir Configuration</h2>
+                <div class="config-options">
+                    <label class="radio-container">
+                        <input type="radio" name="reservoirType" value="fixed" checked>
+                        <span class="checkmark"></span>
+                        <div class="option-content">
+                            <strong>Fixed Reservoirs</strong>
+                            <p>Operations do not impact upper or lower reservoir heights (large reservoirs)</p>
+                        </div>
+                    </label>
+                    
+                    <label class="radio-container">
+                        <input type="radio" name="reservoirType" value="single-variable">
+                        <span class="checkmark"></span>
+                        <div class="option-content">
+                            <strong>Single Variable Reservoir</strong>
+                            <p>Operations impact either upper OR lower reservoir height</p>
+                        </div>
+                    </label>
+                    
+                    <label class="radio-container">
+                        <input type="radio" name="reservoirType" value="dual-variable">
+                        <span class="checkmark"></span>
+                        <div class="option-content">
+                            <strong>Dual Variable Reservoirs</strong>
+                            <p>Operations impact BOTH upper AND lower reservoir heights</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Basic Parameters -->
+            <div class="input-section">
+                <h2>Basic Design Parameters</h2>
+                
+                <div class="input-group">
+                    <label for="desiredPower">Desired Power Capacity:</label>
+                    <input type="number" id="desiredPower" step="0.1" min="0" placeholder="Enter power capacity">
+                    <select id="powerUnit" class="unit-select">
+                        <option value="kW">kW</option>
+                        <option value="MW">MW</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label for="operationTime">Operation Duration:</label>
+                    <input type="number" id="operationTime" step="0.1" min="0" placeholder="Hours of operation" value="8">
+                    <span class="unit-label">hours</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="staticHead">Static Head (H):</label>
+                    <input type="number" id="staticHead" step="0.1" min="0" placeholder="Enter static head">
+                    <span id="headUnit" class="unit-label">m</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="pumpEfficiency">Pump Efficiency:</label>
+                    <input type="number" id="pumpEfficiency" step="0.01" min="0" max="1" value="0.85" placeholder="0.70 - 0.90">
+                    <span class="unit-label">decimal (0.70-0.90)</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="turbineEfficiency">Turbine Efficiency:</label>
+                    <input type="number" id="turbineEfficiency" step="0.01" min="0" max="1" value="0.90" placeholder="0.80 - 0.95">
+                    <span class="unit-label">decimal (0.80-0.95)</span>
+                </div>
+
+                <div class="input-group">
+                    <label for="generatorEfficiency">Generator/Motor Efficiency:</label>
+                    <input type="number" id="generatorEfficiency" step="0.01" min="0" max="1" value="0.95" placeholder="0.90 - 0.98">
+                    <span class="unit-label">decimal (0.90-0.98)</span>
+                </div>
+            </div>
+
+            <!-- Advanced Parameters (Collapsible) -->
+            <div class="advanced-section">
+                <h2 class="collapsible" id="advancedToggle">
+                    Advanced Parameters (Optional) 
+                    <span class="toggle-icon">▼</span>
+                </h2>
+                <div class="advanced-content" id="advancedContent">
+                    <div class="input-group">
+                        <label for="penstockLength">Penstock Length:</label>
+                        <input type="number" id="penstockLength" step="1" min="0" placeholder="Optional - for pressure losses">
+                        <span id="lengthUnit" class="unit-label">m</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="penstockDiameter">Penstock Diameter:</label>
+                        <input type="number" id="penstockDiameter" step="0.1" min="0" placeholder="Optional - for pressure losses">
+                        <span id="diameterUnit" class="unit-label">m</span>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="roughness">Penstock Roughness:</label>
+                        <input type="number" id="roughness" step="0.001" min="0" value="0.0015" placeholder="Pipe roughness coefficient">
+                        <span class="unit-label">mm</span>
+                    </div>
+
+                    <div id="reservoirInputs" class="reservoir-inputs">
+                        <!-- Dynamic content based on reservoir type -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calculate Button -->
+            <div class="calculate-section">
+                <button id="calculateBtn" class="calculate-btn">Calculate Pumped Storage System</button>
+            </div>
+
+            <!-- Results Section -->
+            <div class="results-section">
+                <h2>Calculation Results</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card">
+                        <h3>Energy Storage Capacity</h3>
+                        <div class="result-value" id="energyCapacity">-</div>
+                        <div class="result-formula">E = ρ × g × V × H × η<sub>total</sub></div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Required Flow Rate</h3>
+                        <div class="result-value" id="flowRate">-</div>
+                        <div class="result-formula">Q = P / (ρ × g × H × η<sub>total</sub>)</div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Reservoir Volume Required</h3>
+                        <div class="result-value" id="reservoirVolume">-</div>
+                        <div class="result-formula">V = Q × t<sub>operation</sub></div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Round-trip Efficiency</h3>
+                        <div class="result-value" id="roundTripEfficiency">-</div>
+                        <div class="result-formula">η<sub>RT</sub> = η<sub>pump</sub> × η<sub>turbine</sub> × η<sub>gen</sub>²</div>
+                    </div>
+                </div>
+
+                <!-- Detailed Calculations -->
+                <div class="calculations-section">
+                    <h3>Step-by-Step Calculations</h3>
+                    <div id="calculationSteps" class="calculation-steps">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+
+                <!-- Unit Conversions -->
+                <div class="conversion-section">
+                    <h3>Unit Conversions</h3>
+                    <div id="conversions" class="conversions-grid">
+                        <!-- Dynamic content -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Educational Content -->
+            <div class="education-section">
+                <h2>Understanding Pumped Storage</h2>
+                
+                <div class="info-card">
+                    <h3>How Pumped Storage Works</h3>
+                    <p>Pumped storage hydropower (PSH) is a type of energy storage that uses the gravitational potential energy of water. During periods of low electricity demand, excess energy is used to pump water from a lower reservoir to an upper reservoir. When electricity is needed, water is released from the upper reservoir through turbines to generate electricity.</p>
+                </div>
+
+                <div class="info-card">
+                    <h3>Key Design Considerations</h3>
+                    <ul>
+                        <li><strong>Head Height:</strong> The vertical distance between reservoirs - higher head means more energy density</li>
+                        <li><strong>Reservoir Size:</strong> Determines energy storage capacity and operation duration</li>
+                        <li><strong>Power Rating:</strong> Maximum power that can be generated or consumed during pumping</li>
+                        <li><strong>Efficiency:</strong> Typical round-trip efficiencies range from 70-85%</li>
+                        <li><strong>Response Time:</strong> PSH can respond to grid demands within seconds to minutes</li>
+                    </ul>
+                </div>
+
+                <div class="info-card">
+                    <h3>Efficiency Factors</h3>
+                    <p><strong>Pump Mode:</strong> η<sub>pump</sub> × η<sub>motor</sub> = Overall pumping efficiency</p>
+                    <p><strong>Generation Mode:</strong> η<sub>turbine</sub> × η<sub>generator</sub> = Overall generation efficiency</p>
+                    <p><strong>Round-trip:</strong> η<sub>RT</sub> = η<sub>pumping</sub> × η<sub>generation</sub></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="pumped-storage-script.js"></script>
+    <script src="pumped-storage-script.js"></script>
+    </body>
+</html>
