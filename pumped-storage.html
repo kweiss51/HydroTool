@@ -39,180 +39,15 @@
                 </div>
             </div>
 
-            <!-- Pumped Storage Diagram -->
-            <div class="diagram-section">
-                <h2>Pumped Storage System Diagram</h2>
-                <div class="diagram-container">
-                    <svg viewBox="0 0 1200 600" class="ps-diagram">
-                        <defs>
-                            <!-- Gradients for realistic appearance -->
-                            <linearGradient id="waterGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#3498db;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#2980b9;stop-opacity:1" />
-                            </linearGradient>
-                            
-                            <linearGradient id="hillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#27ae60;stop-opacity:1" />
-                                <stop offset="70%" style="stop-color:#2ecc71;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#16a085;stop-opacity:1" />
-                            </linearGradient>
-                            
-                            <linearGradient id="rockGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" style="stop-color:#95a5a6;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#7f8c8d;stop-opacity:1" />
-                            </linearGradient>
-                            
-                            <linearGradient id="penstockGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" style="stop-color:#34495e;stop-opacity:1" />
-                                <stop offset="50%" style="stop-color:#2c3e50;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#34495e;stop-opacity:1" />
-                            </linearGradient>
-                            
-                            <!-- Arrow markers -->
-                            <marker id="flowArrow" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
-                                <polygon points="0 0, 14 5, 0 10" fill="#1a237e" />
-                            </marker>
-                            
-                            <marker id="genArrow" markerWidth="14" markerHeight="10" refX="12" refY="5" orient="auto">
-                                <polygon points="0 0, 14 5, 0 10" fill="#87ceeb" />
-                            </marker>
-                        </defs>
-                        
-                        <!-- Sky background -->
-                        <rect width="1200" height="300" fill="#87CEEB"/>
-                        
-                        <!-- Mountain/Hill landscape -->
-                        <polygon points="0,300 200,120 400,180 600,100 800,150 1000,80 1200,130 1200,600 0,600" 
-                                fill="url(#hillGradient)" stroke="#229954" stroke-width="2"/>
-                        
-                        <!-- Rock face for upper reservoir -->
-                        <polygon points="150,120 350,120 380,200 120,200" fill="url(#rockGradient)" stroke="#5d6d7e" stroke-width="2"/>
-                        
-                        <!-- Upper Reservoir (on mountain top) -->
-                        <ellipse cx="250" cy="120" rx="100" ry="25" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        <rect x="150" y="120" width="200" height="50" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        <ellipse cx="250" cy="170" rx="100" ry="25" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        
-                        <!-- Upper reservoir label -->
-                        <rect x="165" y="85" width="170" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#2c3e50" stroke-width="2"/>
-                        <text x="250" y="105" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="16">UPPER RESERVOIR</text>
-                        
-                        <!-- Penstock following terrain -->
-                        <path d="M 320 150 Q 450 200 580 280 Q 700 350 800 420" 
-                              stroke="url(#penstockGrad)" stroke-width="16" fill="none" stroke-linecap="round"/>
-                        <path d="M 322 152 Q 452 202 582 282 Q 702 352 798 418" 
-                              stroke="#515a5a" stroke-width="12" fill="none" stroke-linecap="round"/>
-                        
-                        <!-- Penstock support structures -->
-                        <rect x="440" y="195" width="8" height="30" fill="#7f8c8d"/>
-                        <rect x="570" y="275" width="8" height="35" fill="#7f8c8d"/>
-                        <rect x="680" y="345" width="8" height="40" fill="#7f8c8d"/>
-                        
-                        <!-- Powerhouse (at base of mountain) -->
-                        <rect x="760" y="400" width="120" height="80" fill="#e67e22" stroke="#d35400" stroke-width="3" rx="8"/>
-                        <rect x="765" y="405" width="110" height="15" fill="#f39c12" rx="5"/>
-                        <polygon points="760,400 820,380 880,400" fill="#8b4513" stroke="#6b3410" stroke-width="2"/>
-                        
-                        <!-- Powerhouse details -->
-                        <rect x="780" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
-                        <rect x="810" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
-                        <rect x="840" y="420" width="20" height="25" fill="#3498db" stroke="#2980b9" stroke-width="1"/>
-                        
-                        <!-- Powerhouse label -->
-                        <rect x="875" y="385" width="120" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#d35400" stroke-width="2"/>
-                        <text x="935" y="405" text-anchor="middle" fill="#d35400" font-weight="bold" font-size="14">POWERHOUSE</text>
-                        
-                        <!-- Lower Reservoir (at valley floor) -->
-                        <ellipse cx="950" cy="480" rx="120" ry="30" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        <rect x="830" y="480" width="240" height="60" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        <ellipse cx="950" cy="540" rx="120" ry="30" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="3"/>
-                        
-                        <!-- Lower reservoir label -->
-                        <rect x="860" y="445" width="180" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#2c3e50" stroke-width="2"/>
-                        <text x="950" y="465" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="16">LOWER RESERVOIR</text>
-                        
-                        <!-- Tailrace to lower reservoir -->
-                        <rect x="880" y="465" width="40" height="15" fill="url(#waterGradient)" stroke="#1b4f72" stroke-width="2"/>
-                        
-                        <!-- Head measurement -->
-                        <line x1="80" y1="140" x2="80" y2="500" stroke="#e74c3c" stroke-width="4" stroke-dasharray="5,5"/>
-                        <line x1="75" y1="140" x2="85" y2="140" stroke="#e74c3c" stroke-width="4"/>
-                        <line x1="75" y1="500" x2="85" y2="500" stroke="#e74c3c" stroke-width="4"/>
-                        <polygon points="80,145 85,155 75,155" fill="#e74c3c"/>
-                        <polygon points="80,495 85,485 75,485" fill="#e74c3c"/>
-                        
-                        <!-- Head label -->
-                        <rect x="30" y="310" width="50" height="40" fill="rgba(255,255,255,0.95)" rx="8" stroke="#e74c3c" stroke-width="2"/>
-                        <text x="55" y="327" text-anchor="middle" fill="#e74c3c" font-weight="bold" font-size="14">HEAD</text>
-                        <text x="55" y="343" text-anchor="middle" fill="#e74c3c" font-weight="bold" font-size="12">(H)</text>
-                        
-                        <!-- Flow arrows -->
-                        <!-- Generation mode (following penstock path closely) -->
-                        <path d="M 320 150 Q 450 200 580 280 Q 700 350 820 420" 
-                              stroke="#87ceeb" stroke-width="8" fill="none" marker-end="url(#genArrow)" 
-                              stroke-dasharray="12,6" opacity="0.9"/>
-                        <rect x="470" y="235" width="140" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#87ceeb" stroke-width="2"/>
-                        <text x="540" y="255" text-anchor="middle" fill="#1565c0" font-weight="bold" font-size="15">GENERATION</text>
-                        
-                        <!-- Pumping mode (up) -->
-                        <path d="M 800 450 Q 650 390 500 300 Q 400 230 320 180" 
-                              stroke="#1a237e" stroke-width="6" fill="none" marker-end="url(#flowArrow)" 
-                              stroke-dasharray="10,5"/>
-                        <rect x="520" y="320" width="120" height="30" fill="rgba(255,255,255,0.95)" rx="15" stroke="#1a237e" stroke-width="2"/>
-                        <text x="580" y="340" text-anchor="middle" fill="#1a237e" font-weight="bold" font-size="15">PUMPING</text>
-                        
-                        <!-- Power transmission lines -->
-                        <line x1="880" y1="420" x2="1000" y2="420" stroke="#2c3e50" stroke-width="6"/>
-                        <line x1="1000" y1="420" x2="1020" y2="410" stroke="#2c3e50" stroke-width="4"/>
-                        <line x1="1000" y1="420" x2="1020" y2="430" stroke="#2c3e50" stroke-width="4"/>
-                        
-                        <!-- Grid connection -->
-                        <rect x="1025" y="400" width="90" height="45" fill="rgba(255,255,255,0.95)" rx="10" stroke="#2c3e50" stroke-width="2"/>
-                        <text x="1070" y="420" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="14">ELECTRICAL</text>
-                        <text x="1070" y="435" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="14">GRID</text>
-                        
-                        <!-- Elevation markers -->
-                        <text x="250" y="60" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="12">High Elevation</text>
-                        <text x="950" y="580" text-anchor="middle" fill="#2c3e50" font-weight="bold" font-size="12">Low Elevation</text>
-                        
-                        <!-- System title -->
-                        <rect x="400" y="20" width="400" height="35" fill="rgba(44,62,80,0.9)" rx="15"/>
-                        <text x="600" y="42" text-anchor="middle" fill="white" font-weight="bold" font-size="18">PUMPED STORAGE HYDROPOWER SYSTEM</text>
-                    </svg>
-                </div>
-            </div>
-
-            <!-- Reservoir Configuration -->
-            <div class="reservoir-config">
-                <h2>Reservoir Configuration</h2>
-                <div class="config-options">
-                    <label class="radio-container">
-                        <input type="radio" name="reservoirType" value="fixed" checked>
-                        <span class="checkmark"></span>
-                        <div class="option-content">
-                            <strong>Fixed Reservoirs</strong>
-                            <p>Operations do not impact upper or lower reservoir heights (large reservoirs)</p>
-                        </div>
-                    </label>
-                    
-                    <label class="radio-container">
-                        <input type="radio" name="reservoirType" value="single-variable">
-                        <span class="checkmark"></span>
-                        <div class="option-content">
-                            <strong>Single Variable Reservoir</strong>
-                            <p>Operations impact either upper OR lower reservoir height</p>
-                        </div>
-                    </label>
-                    
-                    <label class="radio-container">
-                        <input type="radio" name="reservoirType" value="dual-variable">
-                        <span class="checkmark"></span>
-                        <div class="option-content">
-                            <strong>Dual Variable Reservoirs</strong>
-                            <p>Operations impact BOTH upper AND lower reservoir heights</p>
-                        </div>
-                    </label>
-                </div>
+            <!-- Calculation Instructions -->
+            <div class="instructions-section">
+                <h3>📋 How to Use</h3>
+                <p><strong>Flexible Calculation:</strong> Provide any 2 of the 3 main parameters (Power, Head, Flow Rate) and the calculator will determine the third. Perfect for design optimization and "what-if" scenarios.</p>
+                <ul>
+                    <li><strong>Design Power:</strong> Know your target capacity? Enter power and head to find required flow.</li>
+                    <li><strong>Site Assessment:</strong> Know your site head and available flow? Calculate achievable power.</li>
+                    <li><strong>Flow Analysis:</strong> Know power needs and flow rate? Determine required head.</li>
+                </ul>
             </div>
 
             <!-- Basic Parameters -->
@@ -221,7 +56,7 @@
                 
                 <div class="input-group">
                     <label for="desiredPower">Desired Power Capacity:</label>
-                    <input type="number" id="desiredPower" step="0.1" min="0" placeholder="Enter power capacity">
+                    <input type="number" id="desiredPower" step="0.1" min="0" placeholder="Leave blank to calculate from head & flow">
                     <select id="powerUnit" class="unit-select">
                         <option value="kW">kW</option>
                         <option value="MW">MW</option>
@@ -230,7 +65,7 @@
 
                 <div class="input-group">
                     <label for="flowRate">Flow Rate (Q):</label>
-                    <input type="number" id="flowRate" step="0.1" min="0" placeholder="Enter flow rate">
+                    <input type="number" id="flowRate" step="0.1" min="0" placeholder="Leave blank to calculate from power & head">
                     <span id="flowUnit" class="unit-label">m³/s</span>
                 </div>
 
@@ -242,7 +77,7 @@
 
                 <div class="input-group">
                     <label for="staticHead">Static Head (H):</label>
-                    <input type="number" id="staticHead" step="0.1" min="0" placeholder="Enter static head">
+                    <input type="number" id="staticHead" step="0.1" min="0" placeholder="Leave blank to calculate from power & flow">
                     <span id="headUnit" class="unit-label">m</span>
                 </div>
 
@@ -265,13 +100,14 @@
                 </div>
             </div>
 
-            <!-- Advanced Parameters (Collapsible) -->
+            <!-- Additional Parameters (Collapsible) -->
             <div class="advanced-section">
                 <h2 class="collapsible" id="advancedToggle">
-                    Advanced Parameters (Optional) 
+                    Additional Parameters (Optional) 
                     <span class="toggle-icon">▼</span>
                 </h2>
                 <div class="advanced-content" id="advancedContent">
+                    <h3>Penstock Head Loss Analysis</h3>
                     <div class="input-group">
                         <label for="penstockLength">Penstock Length:</label>
                         <input type="number" id="penstockLength" step="1" min="0" placeholder="Optional - for pressure losses">
@@ -288,6 +124,38 @@
                         <label for="roughness">Penstock Roughness:</label>
                         <input type="number" id="roughness" step="0.001" min="0" value="0.0015" placeholder="Pipe roughness coefficient">
                         <span class="unit-label">mm</span>
+                    </div>
+
+                    <h3>Reservoir Configuration</h3>
+                    <div class="reservoir-config">
+                        <div class="config-options">
+                            <label class="radio-container">
+                                <input type="radio" name="reservoirType" value="fixed" checked>
+                                <span class="checkmark"></span>
+                                <div class="option-content">
+                                    <strong>Fixed Reservoirs</strong>
+                                    <p>Operations do not impact reservoir heights (large reservoirs)</p>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-container">
+                                <input type="radio" name="reservoirType" value="single-variable">
+                                <span class="checkmark"></span>
+                                <div class="option-content">
+                                    <strong>Single Variable Reservoir</strong>
+                                    <p>Operations impact either upper OR lower reservoir height</p>
+                                </div>
+                            </label>
+                            
+                            <label class="radio-container">
+                                <input type="radio" name="reservoirType" value="dual-variable">
+                                <span class="checkmark"></span>
+                                <div class="option-content">
+                                    <strong>Dual Variable Reservoirs</strong>
+                                    <p>Operations impact BOTH upper AND lower reservoir heights</p>
+                                </div>
+                            </label>
+                        </div>
                     </div>
 
                     <div id="reservoirInputs" class="reservoir-inputs">
@@ -307,15 +175,27 @@
                 
                 <div class="results-grid">
                     <div class="result-card">
-                        <h3>Energy Storage Capacity</h3>
-                        <div class="result-value" id="energyCapacity">-</div>
-                        <div class="result-formula">E = ρ × g × V × H × η<sub>total</sub></div>
+                        <h3>Power Capacity</h3>
+                        <div class="result-value" id="powerCapacity">-</div>
+                        <div class="result-formula">P = ρ × g × Q × H × η<sub>gen</sub></div>
                     </div>
 
                     <div class="result-card">
-                        <h3>Required Flow Rate</h3>
-                        <div class="result-value" id="flowRate">-</div>
-                        <div class="result-formula">Q = P / (ρ × g × H × η<sub>total</sub>)</div>
+                        <h3>Static Head</h3>
+                        <div class="result-value" id="staticHeadResult">-</div>
+                        <div class="result-formula">H = P / (ρ × g × Q × η<sub>gen</sub>)</div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Flow Rate</h3>
+                        <div class="result-value" id="flowRateResult">-</div>
+                        <div class="result-formula">Q = P / (ρ × g × H × η<sub>gen</sub>)</div>
+                    </div>
+
+                    <div class="result-card">
+                        <h3>Energy Storage Capacity</h3>
+                        <div class="result-value" id="energyCapacity">-</div>
+                        <div class="result-formula">E = ρ × g × V × H × η<sub>total</sub></div>
                     </div>
 
                     <div class="result-card">

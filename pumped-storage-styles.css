@@ -99,6 +99,41 @@ header {
     margin-bottom: 20px;
 }
 
+/* Instructions Section */
+.instructions-section {
+    margin-bottom: 25px;
+    padding: 20px;
+    background: linear-gradient(135deg, #e3f2fd, #f3e5f5);
+    border-radius: 12px;
+    border-left: 4px solid #4a90e2;
+}
+
+.instructions-section h3 {
+    color: #2c3e50;
+    margin-bottom: 12px;
+    font-size: 1.2rem;
+}
+
+.instructions-section p {
+    color: #34495e;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.instructions-section ul {
+    color: #34495e;
+    margin-left: 20px;
+    line-height: 1.6;
+}
+
+.instructions-section li {
+    margin-bottom: 6px;
+}
+
+.instructions-section strong {
+    color: #2c3e50;
+}
+
 header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
@@ -505,6 +540,16 @@ header p {
     font-weight: bold;
     color: #4a90e2;
     margin-bottom: 10px;
+}
+
+.result-value .calculated {
+    font-size: 0.8rem;
+    color: #28a745;
+    font-weight: normal;
+    background: #d4edda;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 8px;
 }
 
 .result-formula {
