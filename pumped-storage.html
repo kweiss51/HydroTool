@@ -39,6 +39,104 @@
                 </div>
             </div>
 
+            <!-- SVG Diagram -->
+            <div class="diagram-section">
+                <svg viewBox="0 0 680 200" xmlns="http://www.w3.org/2000/svg" class="hydro-diagram" aria-label="Pumped storage system diagram">
+                    <defs>
+                        <linearGradient id="psBg" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#e8f4fc"/>
+                            <stop offset="100%" stop-color="#f0f8ff"/>
+                        </linearGradient>
+                        <linearGradient id="psWater" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#2e86c1"/>
+                            <stop offset="100%" stop-color="#1a5276"/>
+                        </linearGradient>
+                        <linearGradient id="psTerrain" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#5d8a3c"/>
+                            <stop offset="100%" stop-color="#3d6b2a"/>
+                        </linearGradient>
+                        <marker id="psArrowD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#e67e22"/>
+                        </marker>
+                        <marker id="psArrowU" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#2e86c1"/>
+                        </marker>
+                        <marker id="psArrowH" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+                        </marker>
+                        <marker id="psArrowHb" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M0,0 L10,5 L0,10 z" fill="#c0392b"/>
+                        </marker>
+                    </defs>
+
+                    <!-- Background -->
+                    <rect width="680" height="200" fill="url(#psBg)" rx="8"/>
+
+                    <!-- Mountain silhouette -->
+                    <path d="M0,200 L0,130 Q60,80 130,55 Q200,30 260,45 Q320,60 360,90 Q400,115 460,140 Q540,165 680,158 L680,200 Z" fill="url(#psTerrain)"/>
+                    <path d="M0,200 L0,155 Q60,105 130,80 Q200,55 260,70 Q320,85 360,115 Q400,140 460,165 L460,200 Z" fill="#3d6b2a" opacity="0.5"/>
+
+                    <!-- Upper reservoir -->
+                    <rect x="55" y="28" width="175" height="40" rx="4" fill="url(#psWater)" opacity="0.9"/>
+                    <path d="M68,41 Q100,36 135,41 Q170,46 215,41 Q228,38 232,41" stroke="rgba(255,255,255,0.45)" stroke-width="2" fill="none"/>
+                    <text x="142" y="21" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#1a4a6e">Upper Reservoir</text>
+
+                    <!-- Lower reservoir -->
+                    <rect x="55" y="152" width="175" height="36" rx="4" fill="url(#psWater)" opacity="0.85"/>
+                    <path d="M68,163 Q100,158 135,163 Q170,168 215,163 Q228,160 232,163" stroke="rgba(255,255,255,0.4)" stroke-width="2" fill="none"/>
+                    <text x="142" y="200" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#1a4a6e">Lower Reservoir</text>
+
+                    <!-- Head H dimension -->
+                    <line x1="240" y1="48"  x2="252" y2="48"  stroke="#c0392b" stroke-width="1.5"/>
+                    <line x1="240" y1="152" x2="252" y2="152" stroke="#c0392b" stroke-width="1.5"/>
+                    <line x1="246" y1="54"  x2="246" y2="146" stroke="#c0392b" stroke-width="2"
+                          marker-end="url(#psArrowH)" marker-start="url(#psArrowHb)"/>
+                    <rect x="252" y="92" width="24" height="20" fill="white" rx="3" opacity="0.88"/>
+                    <text x="264" y="106" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="15" font-weight="700" fill="#c0392b">H</text>
+
+                    <!-- Penstock/shaft -->
+                    <rect x="130" y="68" width="26" height="84" rx="4" fill="#2c3e50"/>
+                    <rect x="134" y="68" width="18" height="84" rx="3" fill="#4a5568"/>
+
+                    <!-- Generating: water flows DOWN (orange arrow) -->
+                    <path d="M143,72 L143,108" stroke="#e67e22" stroke-width="3" stroke-dasharray="8,5"
+                          marker-end="url(#psArrowD)"/>
+                    <text x="162" y="88" font-family="Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#e67e22">Generate ↓</text>
+
+                    <!-- Pumping: water flows UP (blue arrow) -->
+                    <path d="M125,118 L125,82" stroke="#2e86c1" stroke-width="3" stroke-dasharray="8,5"
+                          marker-end="url(#psArrowU)"/>
+                    <text x="40" y="104" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" font-weight="700" fill="#2e86c1">Pump ↑</text>
+
+                    <!-- Powerhouse -->
+                    <rect x="96" y="106" width="52" height="46" fill="#5d6d7e" rx="3"/>
+                    <rect x="96" y="99"  width="52" height="11" fill="#2c3e50" rx="2"/>
+                    <text x="122" y="129" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="9" fill="white" font-weight="600">⚙ Pump/</text>
+                    <text x="122" y="141" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="9" fill="white" font-weight="600">Turbine</text>
+
+                    <!-- Divider: generating vs pumping mode legend -->
+                    <rect x="320" y="20" width="340" height="168" rx="8" fill="white" opacity="0.55"/>
+                    <text x="490" y="42" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="13" font-weight="700" fill="#1a4a6e">Operating Modes</text>
+
+                    <!-- Generation mode -->
+                    <rect x="335" y="54" width="145" height="60" rx="6" fill="#fff7ed" stroke="#e67e22" stroke-width="1.5"/>
+                    <text x="407" y="74" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#e67e22">⚡ Generation</text>
+                    <text x="407" y="90" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" fill="#5d4037">High demand periods</text>
+                    <text x="407" y="104" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" fill="#5d4037">Water flows down → power</text>
+
+                    <!-- Pumping mode -->
+                    <rect x="495" y="54" width="150" height="60" rx="6" fill="#e8f4fc" stroke="#2e86c1" stroke-width="1.5"/>
+                    <text x="570" y="74" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="12" font-weight="700" fill="#2e86c1">💧 Pumping</text>
+                    <text x="570" y="90" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" fill="#1a4a6e">Low demand / surplus</text>
+                    <text x="570" y="104" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" fill="#1a4a6e">Water pumped back up</text>
+
+                    <!-- Round-trip efficiency note -->
+                    <rect x="335" y="128" width="310" height="46" rx="6" fill="#f0fff4" stroke="#27ae60" stroke-width="1.5"/>
+                    <text x="490" y="147" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="11" font-weight="700" fill="#27ae60">Round-trip Efficiency</text>
+                    <text x="490" y="163" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="10" fill="#1a4a6e">η_RT = η_pump × η_turbine × η_generator²  (typically 70–85%)</text>
+                </svg>
+            </div>
+
             <!-- Calculation Instructions -->
             <div class="instructions-section">
                 <h3>📋 How to Use</h3>
@@ -83,20 +181,20 @@
 
                 <div class="input-group">
                     <label for="pumpEfficiency">Pump Efficiency:</label>
-                    <input type="number" id="pumpEfficiency" step="0.01" min="0" max="1" value="0.85" placeholder="0.70 - 0.90">
-                    <span class="unit-label">decimal (0.70-0.90)</span>
+                    <input type="number" id="pumpEfficiency" step="1" min="1" max="100" value="85" placeholder="70 – 90">
+                    <span class="unit-label">% (70–90%)</span>
                 </div>
 
                 <div class="input-group">
                     <label for="turbineEfficiency">Turbine Efficiency:</label>
-                    <input type="number" id="turbineEfficiency" step="0.01" min="0" max="1" value="0.90" placeholder="0.80 - 0.95">
-                    <span class="unit-label">decimal (0.80-0.95)</span>
+                    <input type="number" id="turbineEfficiency" step="1" min="1" max="100" value="90" placeholder="80 – 95">
+                    <span class="unit-label">% (80–95%)</span>
                 </div>
 
                 <div class="input-group">
                     <label for="generatorEfficiency">Generator/Motor Efficiency:</label>
-                    <input type="number" id="generatorEfficiency" step="0.01" min="0" max="1" value="0.95" placeholder="0.90 - 0.98">
-                    <span class="unit-label">decimal (0.90-0.98)</span>
+                    <input type="number" id="generatorEfficiency" step="1" min="1" max="100" value="95" placeholder="90 – 98">
+                    <span class="unit-label">% (90–98%)</span>
                 </div>
             </div>
 
@@ -177,25 +275,25 @@
                     <div class="result-card">
                         <h3>Power Capacity</h3>
                         <div class="result-value" id="powerCapacity">-</div>
-                        <div class="result-formula">P = ρ × g × Q × H × η<sub>gen</sub></div>
+                        <div class="result-formula" id="powerCapacityFormula">P = ρ × g × Q × H × η<sub>gen</sub></div>
                     </div>
 
                     <div class="result-card">
                         <h3>Static Head</h3>
                         <div class="result-value" id="staticHeadResult">-</div>
-                        <div class="result-formula">H = P / (ρ × g × Q × η<sub>gen</sub>)</div>
+                        <div class="result-formula" id="staticHeadFormula">H = P / (ρ × g × Q × η<sub>gen</sub>)</div>
                     </div>
 
                     <div class="result-card">
                         <h3>Flow Rate</h3>
                         <div class="result-value" id="flowRateResult">-</div>
-                        <div class="result-formula">Q = P / (ρ × g × H × η<sub>gen</sub>)</div>
+                        <div class="result-formula" id="flowRateFormula">Q = P / (ρ × g × H × η<sub>gen</sub>)</div>
                     </div>
 
                     <div class="result-card">
                         <h3>Energy Storage Capacity</h3>
                         <div class="result-value" id="energyCapacity">-</div>
-                        <div class="result-formula">E = ρ × g × V × H × η<sub>total</sub></div>
+                        <div class="result-formula" id="energyCapacityFormula">E = ρ × g × V × H × η<sub>total</sub></div>
                     </div>
 
                     <div class="result-card">
@@ -253,6 +351,12 @@
                         <!-- Dynamic content -->
                     </div>
                 </div>
+
+                <!-- Export buttons -->
+                <div class="export-buttons">
+                    <button id="copyResultsBtn" class="export-btn">📋 Copy Results</button>
+                    <button id="downloadCSVBtn" class="export-btn">⬇ Download CSV</button>
+                </div>
             </div>
 
             <!-- Educational Content -->
@@ -285,7 +389,6 @@
         </div>
     </div>
 
-    <script src="pumped-storage-script.js"></script>
     <script src="pumped-storage-script.js"></script>
     </body>
 </html>

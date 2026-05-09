@@ -2,6 +2,7 @@ class PumpedStorageCalculator {
     constructor() {
         this.currentUnit = 'si';
         this.reservoirType = 'fixed';
+        this.lastCalc = null;
         this.constants = {
             si: {
                 gravity: 9.81, // m/s²
@@ -66,10 +67,10 @@ class PumpedStorageCalculator {
             this.toggleAdvanced();
         });
         
-        // Calculate button
-        document.getElementById('calculateBtn').addEventListener('click', () => {
-            this.calculateSystem();
-        });
+        document.getElementById('calculateBtn').addEventListener('click', () => this.calculateSystem());
+
+        document.getElementById('copyResultsBtn')?.addEventListener('click', () => this.copyResults());
+        document.getElementById('downloadCSVBtn')?.addEventListener('click', () => this.downloadCSV());
         
         // Real-time calculation on input change
         const inputs = ['desiredPower', 'operationTime', 'staticHead', 'flowRate', 'pumpEfficiency', 
@@ -158,13 +159,28 @@ class PumpedStorageCalculator {
             powerUnitSelect.appendChild(option);
         });
         
-        // Try to preserve the current power unit, or set a reasonable default
         if (constants.powerUnits.includes(currentPowerUnit)) {
             powerUnitSelect.value = currentPowerUnit;
         } else {
-            // Set default to kW for both systems
             powerUnitSelect.value = 'kW';
         }
+
+        this.updateFormulaLabels();
+    }
+
+    updateFormulaLabels() {
+        const si = this.currentUnit === 'si';
+        // Update result card formula subtitles
+        const labels = {
+            'powerCapacityFormula':    si ? 'P = ρ × g × Q × H × η<sub>gen</sub>'    : 'P = γ × Q × H × η<sub>gen</sub>',
+            'staticHeadFormula':       si ? 'H = P / (ρ × g × Q × η<sub>gen</sub>)'  : 'H = P / (γ × Q × η<sub>gen</sub>)',
+            'flowRateFormula':         si ? 'Q = P / (ρ × g × H × η<sub>gen</sub>)'  : 'Q = P / (γ × H × η<sub>gen</sub>)',
+            'energyCapacityFormula':   si ? 'E = ρ × g × V × H × η<sub>total</sub>'  : 'E = γ × V × H × η<sub>total</sub>',
+        };
+        Object.entries(labels).forEach(([id, html]) => {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        });
     }
 
     calculateSystem() {
@@ -176,6 +192,7 @@ class PumpedStorageCalculator {
         }
         
         const calculations = this.performCalculations(inputs);
+        this.lastCalc = calculations;
         this.displayResults(calculations);
         this.displayCalculationSteps(calculations);
         this.displayConversions(calculations);
@@ -197,15 +214,20 @@ class PumpedStorageCalculator {
         }
         // kW stays as is
         
+        // Efficiencies entered as % (0-100), convert to decimal
+        const pumpEff      = (parseFloat(document.getElementById('pumpEfficiency').value)      || 85) / 100;
+        const turbineEff   = (parseFloat(document.getElementById('turbineEfficiency').value)   || 90) / 100;
+        const generatorEff = (parseFloat(document.getElementById('generatorEfficiency').value) || 95) / 100;
+
         return {
             power: power, // Always in kW
             powerUnit: powerUnit,
             operationTime: parseFloat(document.getElementById('operationTime').value) || 8,
             staticHead: parseFloat(document.getElementById('staticHead').value) || 0,
             flowRate: parseFloat(document.getElementById('flowRate').value) || 0,
-            pumpEfficiency: parseFloat(document.getElementById('pumpEfficiency').value) || 0.85,
-            turbineEfficiency: parseFloat(document.getElementById('turbineEfficiency').value) || 0.90,
-            generatorEfficiency: parseFloat(document.getElementById('generatorEfficiency').value) || 0.95,
+            pumpEfficiency: pumpEff,
+            turbineEfficiency: turbineEff,
+            generatorEfficiency: generatorEff,
             penstockLength: parseFloat(document.getElementById('penstockLength').value) || 0,
             penstockDiameter: parseFloat(document.getElementById('penstockDiameter').value) || 0,
             roughness: parseFloat(document.getElementById('roughness').value) || 0.0015
@@ -229,36 +251,30 @@ class PumpedStorageCalculator {
             return 0;
         }
 
-        // Convert inputs for calculation consistency
-        const Q = flowRate; // m³/s
-        const D = this.currentUnit === 'imperial' ? penstockDiameter * 0.3048 : penstockDiameter; // Convert to meters if needed
-        const L = this.currentUnit === 'imperial' ? penstockLength * 0.3048 : penstockLength; // Convert to meters if needed
-        const e = roughness; // m
+        // Convert all inputs to SI for Darcy-Weisbach (which uses g = 9.81 m/s²)
+        const Q = this.currentUnit === 'imperial' ? flowRate * 0.0283168 : flowRate; // m³/s
+        const D = this.currentUnit === 'imperial' ? penstockDiameter * 0.3048 : penstockDiameter; // m
+        const L = this.currentUnit === 'imperial' ? penstockLength * 0.3048 : penstockLength; // m
+        const e = roughness / 1000; // mm → m (unit label in UI is mm)
 
-        // Calculate velocity
-        const A = Math.PI * Math.pow(D / 2, 2); // Cross-sectional area
-        const V = Q / A; // Velocity
+        const A = Math.PI * Math.pow(D / 2, 2);
+        const V = Q / A;
 
-        // Calculate Reynolds number
-        const nu = 1.004e-6; // Kinematic viscosity of water at 20°C (m²/s)
+        const nu = 1.004e-6; // kinematic viscosity of water at 20°C (m²/s)
         const Re = (V * D) / nu;
 
-        // Calculate friction factor using Colebrook-White equation approximation
         let f;
         if (Re < 2300) {
-            // Laminar flow
             f = 64 / Re;
         } else {
-            // Turbulent flow - Swamee-Jain approximation
+            // Swamee-Jain approximation of Colebrook-White
             const term1 = e / (3.7 * D);
             const term2 = 5.74 / Math.pow(Re, 0.9);
             f = 0.25 / Math.pow(Math.log10(term1 + term2), 2);
         }
 
-        // Calculate head loss using Darcy-Weisbach equation
-        const headLoss = f * (L / D) * (Math.pow(V, 2) / (2 * 9.81)); // meters
-
-        return this.currentUnit === 'imperial' ? headLoss * 3.28084 : headLoss; // Convert to feet if Imperial
+        const headLoss_m = f * (L / D) * (Math.pow(V, 2) / (2 * 9.81)); // meters
+        return this.currentUnit === 'imperial' ? headLoss_m * 3.28084 : headLoss_m;
     }
 
     performCalculations(inputs) {
@@ -326,34 +342,55 @@ class PumpedStorageCalculator {
         };
     }
 
+    // Convert native power units to kW:
+    //   SI:       Watts × (1/1000)
+    //   Imperial: ft·lbf/s × (1.35582/1000)  [1 ft·lbf/s = 1.35582 W]
+    nativePowerToKW(nativePower) {
+        return this.currentUnit === 'si'
+            ? nativePower / 1000
+            : nativePower * 1.35582 / 1000;
+    }
+
+    // Convert kW to native power units (inverse of above)
+    kWToNativePower(kW) {
+        return this.currentUnit === 'si'
+            ? kW * 1000
+            : kW / 1.35582 * 1000; // kW → ft·lbf/s
+    }
+
     calculatePower(flowRate, head, efficiency, g, rho) {
-        // P = ρ × g × Q × H × η
-        const powerWatts = rho * g * flowRate * head * efficiency;
-        return powerWatts / 1000; // Always return kW
+        // SI:       P [W]        = ρ [kg/m³] × g [m/s²] × Q × H × η
+        // Imperial: P [ft·lbf/s] = γ [lbf/ft³] × Q × H × η
+        //   γ ≈ ρ numerically because g/g_c = 32.174/32.174 = 1 at standard conditions
+        const nativePower = this.currentUnit === 'si'
+            ? rho * g * flowRate * head * efficiency
+            : rho * flowRate * head * efficiency;
+        return this.nativePowerToKW(nativePower);
     }
 
     calculateFlowRate(power, head, efficiency, g, rho) {
-        // P = ρ × g × Q × H × η
-        // Q = P / (ρ × g × H × η)
-        
-        const powerInWatts = power * 1000; // power is always in kW, convert to Watts
-        return powerInWatts / (rho * g * head * efficiency);
+        // Q = P / (γ × H × η)
+        const nativePower = this.kWToNativePower(power);
+        const gamma = this.currentUnit === 'si' ? rho * g : rho;
+        return nativePower / (gamma * head * efficiency);
     }
 
     calculateHead(power, flowRate, efficiency, g, rho) {
-        // P = ρ × g × Q × H × η
-        // H = P / (ρ × g × Q × η)
-        
-        const powerInWatts = power * 1000; // power is always in kW, convert to Watts
-        return powerInWatts / (rho * g * flowRate * efficiency);
+        // H = P / (γ × Q × η)
+        const nativePower = this.kWToNativePower(power);
+        const gamma = this.currentUnit === 'si' ? rho * g : rho;
+        return nativePower / (gamma * flowRate * efficiency);
     }
 
     calculateEnergyCapacity(volume, head, efficiency, g, rho) {
-        // E = ρ × g × V × H × η (in Joules)
-        // Convert to kWh: divide by 3.6 × 10^6
-        
-        const energyJoules = rho * g * volume * head * efficiency;
-        return energyJoules / 3600000; // Convert J to kWh
+        // E [kWh] = γ × V × H × η / (J-per-kWh)
+        // SI:       γ = ρ×g [N/m³], result in Joules → /3,600,000 for kWh
+        // Imperial: γ = ρ [lbf/ft³], result in ft·lbf → ×1.35582 for J → /3,600,000 for kWh
+        const gamma = this.currentUnit === 'si' ? rho * g : rho;
+        const nativeEnergy = gamma * volume * head * efficiency;
+        return this.currentUnit === 'si'
+            ? nativeEnergy / 3600000
+            : nativeEnergy * 1.35582 / 3600000;
     }
 
     displayResults(calc) {
@@ -538,14 +575,15 @@ class PumpedStorageCalculator {
     }
 
     formatNumber(num) {
-        if (num === 0 || num === null || num === undefined) return '0';
-        if (isNaN(num)) return 'NaN';
-        
-        const absNum = Math.abs(num);
-        if (absNum < 0.01) return num.toExponential(2);
-        if (absNum < 1000) return num.toFixed(2);
-        if (absNum < 1000000) return (num / 1000).toFixed(2) + 'K';
-        return (num / 1000000).toFixed(2) + 'M';
+        if (num === null || num === undefined || !isFinite(num)) return '—';
+        if (num === 0) return '0';
+        const abs = Math.abs(num);
+        if (abs < 0.001)  return num.toExponential(2);
+        if (abs < 1)      return num.toLocaleString('en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
+        if (abs < 10)     return num.toLocaleString('en-US', { minimumFractionDigits: 3, maximumFractionDigits: 3 });
+        if (abs < 100)    return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        if (abs < 10000)  return num.toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+        return Math.round(num).toLocaleString('en-US');
     }
 
     clearResults() {
@@ -808,6 +846,111 @@ class PumpedStorageCalculator {
                 }
             }
         });
+    }
+
+    copyResults() {
+        if (!this.lastCalc) return;
+        const c = this.lastCalc;
+        const u = this.currentUnit;
+        const lUnit = this.constants[u].lengthUnit;
+        const fUnit = this.constants[u].flowUnit;
+        const text = [
+            '=== Pumped Storage Calculation Results ===',
+            `Unit System:           ${u === 'si' ? 'SI (Metric)' : 'Imperial'}`,
+            `Power Capacity:        ${this.formatNumber(c.actualPower)} kW`,
+            `Static Head:           ${this.formatNumber(c.staticHead)} ${lUnit}`,
+            `Effective Head:        ${this.formatNumber(c.effectiveHead)} ${lUnit}`,
+            `Flow Rate:             ${this.formatNumber(c.flowRate)} ${fUnit}`,
+            `Reservoir Volume:      ${this.formatNumber(c.reservoirVolume)} ${this.constants[u].volumeUnit}`,
+            `Energy Storage:        ${this.formatNumber(c.energyCapacity)} kWh`,
+            `Round-trip Efficiency: ${(c.roundTripEfficiency * 100).toFixed(1)}%`,
+        ].join('\n');
+
+        navigator.clipboard.writeText(text).then(() => {
+            const btn = document.getElementById('copyResultsBtn');
+            if (!btn) return;
+            const orig = btn.textContent;
+            btn.textContent = '✓ Copied!';
+            btn.classList.add('btn-success');
+            setTimeout(() => { btn.textContent = orig; btn.classList.remove('btn-success'); }, 2000);
+        });
+    }
+
+    downloadCSV() {
+        if (!this.lastCalc) return;
+        const c = this.lastCalc;
+        const u = this.currentUnit;
+        const rows = [
+            ['Parameter', 'Value', 'Unit'],
+            ['Unit System',           u === 'si' ? 'SI (Metric)' : 'Imperial', ''],
+            ['Power Capacity',        c.actualPower.toFixed(2),        'kW'],
+            ['Static Head',           c.staticHead.toFixed(2),         this.constants[u].lengthUnit],
+            ['Effective Head',        c.effectiveHead.toFixed(2),      this.constants[u].lengthUnit],
+            ['Flow Rate',             c.flowRate.toFixed(4),           this.constants[u].flowUnit],
+            ['Reservoir Volume',      c.reservoirVolume.toFixed(0),    this.constants[u].volumeUnit],
+            ['Energy Storage',        c.energyCapacity.toFixed(2),     'kWh'],
+            ['Round-trip Efficiency', (c.roundTripEfficiency * 100).toFixed(1), '%'],
+            ['Head Loss',             c.headLoss.toFixed(3),           this.constants[u].lengthUnit],
+            ['Pumping Power',         c.pumpingPower.toFixed(2),       'kW'],
+        ];
+        const csv  = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url  = URL.createObjectURL(blob);
+        const a    = Object.assign(document.createElement('a'), { href: url, download: 'pumped-storage-results.csv' });
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    initializeReservoirConfig() {
+        this.reservoirType = 'fixed';
+        this.updateReservoirInputs();
+    }
+
+    updateReservoirInputs() {
+        const container = document.getElementById('reservoirInputs');
+        const lengthUnit = this.constants[this.currentUnit].lengthUnit;
+        const volumeUnit = this.constants[this.currentUnit].volumeUnit;
+
+        if (this.reservoirType === 'fixed') {
+            container.innerHTML = '';
+            return;
+        }
+
+        const upperLabel = this.reservoirType === 'dual-variable' ? 'Upper Reservoir' : 'Variable Reservoir';
+
+        let html = `
+            <h4>${upperLabel} Parameters</h4>
+            <div class="input-group">
+                <label for="upperReservoirArea">Surface Area:</label>
+                <input type="number" id="upperReservoirArea" step="1" min="0" placeholder="Reservoir surface area">
+                <span class="unit-label">${this.currentUnit === 'si' ? 'm²' : 'ft²'}</span>
+            </div>
+            <div class="input-group">
+                <label for="upperInitialLevel">Initial Water Level:</label>
+                <input type="number" id="upperInitialLevel" step="0.1" min="0" placeholder="Starting water level">
+                <span class="unit-label">${lengthUnit}</span>
+            </div>
+        `;
+
+        if (this.reservoirType === 'dual-variable') {
+            html += `
+                <h4>Lower Reservoir Parameters</h4>
+                <div class="input-group">
+                    <label for="lowerReservoirArea">Surface Area:</label>
+                    <input type="number" id="lowerReservoirArea" step="1" min="0" placeholder="Reservoir surface area">
+                    <span class="unit-label">${this.currentUnit === 'si' ? 'm²' : 'ft²'}</span>
+                </div>
+                <div class="input-group">
+                    <label for="lowerInitialLevel">Initial Water Level:</label>
+                    <input type="number" id="lowerInitialLevel" step="0.1" min="0" placeholder="Starting water level">
+                    <span class="unit-label">${lengthUnit}</span>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
     }
 
     toggleAdvanced() {
